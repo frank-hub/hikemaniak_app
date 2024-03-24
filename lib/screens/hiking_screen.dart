@@ -1,129 +1,116 @@
 import 'package:flutter/material.dart';
+import 'package:story_view/story_view.dart';
 
-class HikingScreen extends StatefulWidget {
+class HikingScreen extends StatelessWidget {
+  // This widget is the root of your application.
   @override
-  _HikingScreenState createState() => _HikingScreenState();
+  Widget build(BuildContext context) {
+    return Status();
+  }
 }
 
-class _HikingScreenState extends State<HikingScreen> {
+class Status extends StatelessWidget {
+  final StoryController controller = StoryController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Stack(
-          alignment: Alignment(0.0, 0.0),
+      appBar: AppBar(
+        title: Text("Delicious Ghanaian Meals"),
+      ),
+      body: Container(
+        margin: EdgeInsets.all(
+          8,
+        ),
+        child: ListView(
           children: <Widget>[
             Container(
-              //margin: EdgeInsets.only(top: 60),
-              child: Image.asset(
-                'assets/images/ladywritingbig.png',
-                width: double.infinity,
-                fit: BoxFit.fill,
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.9),
-                    Colors.black.withOpacity(0.4),
-                    Colors.white.withOpacity(0.1),
-                    Colors.white.withOpacity(0.1),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              //margin: EdgeInsets.only(top: 60),
-              child: Column(
-                children: <Widget>[
-                  IconButton(
-                      icon: Image.asset(
-                        'assets/images/closeicon.png',
+              height: 300,
+              child: StoryView(
+                controller: controller,
+                storyItems: [
+                  StoryItem.text(
+                    title:
+                    "Hello world!\nHave a look at some great hike listings. \n\nTap!",
+                    backgroundColor: Colors.orange,
+                    roundedTop: true,
+                  ),
+                  // StoryItem.inlineImage(
+                  //   NetworkImage(
+                  //       "https://image.ibb.co/gCZFbx/Banku-and-tilapia.jpg"),
+                  //   caption: Text(
+                  //     "Banku & Tilapia. The food to keep you charged whole day.\n#1 Local food.",
+                  //     style: TextStyle(
+                  //       color: Colors.white,
+                  //       backgroundColor: Colors.black54,
+                  //       fontSize: 17,
+                  //     ),
+                  //   ),
+                  // ),
+                  StoryItem.inlineImage(
+                    url:
+                    "https://hikemaniak.co.ke/wp-content/uploads/2024/01/53F63597-24C7-4453-819D-C9E892D317F7_1_105_c-1024x761.jpeg",
+                    controller: controller,
+                    caption: Text(
+                      "Mount Kenya Chogoria Sirimon Route",
+                      style: TextStyle(
+                        color: Colors.white,
+                        backgroundColor: Colors.black54,
+                        fontSize: 17,
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      }),
-                  Container(
-                    color: Colors.black,
-                    child: Padding(
-                      padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                      child: Text('TRENDING',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontSize: 26,
-                            fontStyle: FontStyle.italic,
-                          )),
                     ),
                   ),
+                  StoryItem.inlineImage(
+                    url:
+                    "https://hikemaniak.co.ke/wp-content/uploads/2023/04/B3E557C4-EAF5-47A4-85F7-2D7247F06C27-1024x768.jpeg",
+                    controller: controller,
+                    caption: Text(
+                      "Gura Forest Trek and Waterfall Chase",
+                      style: TextStyle(
+                        color: Colors.white,
+                        backgroundColor: Colors.black54,
+                        fontSize: 17,
+                      ),
+                    ),
+                  )
                 ],
+                onStoryShow: (storyItem, index) {
+                  print("Showing a story");
+                },
+                onComplete: () {
+                  print("Completed a cycle");
+                },
+                progressPosition: ProgressPosition.bottom,
+                repeat: false,
+                inline: true,
               ),
             ),
-            Positioned(
-              bottom: 50,
-              child: Container(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Material(
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => MoreStories()));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(8))),
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text('Difficulty level: Medium',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          )),
-                      SizedBox(height: 14),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            '4.5',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Image.asset('assets/images/stars.png'),
-                        ],
+                      Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
                       ),
-                      SizedBox(height: 14),
+                      SizedBox(
+                        width: 16,
+                      ),
                       Text(
-                        'Unlock your full potential with\nour hiking tour. Explore the best\nhiking sights with us!!',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18,
-                        ),
+                        "View more stories",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
-                      SizedBox(height: 20),
-                      Container(
-                        margin: EdgeInsets.only(left: 30),
-                        decoration: BoxDecoration(
-                            color: Color.fromRGBO(23, 193, 255, 1),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20),
-                            )),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50.0, vertical: 15),
-                          child: Text('REGISTER NOW',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              )),
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -131,6 +118,103 @@ class _HikingScreenState extends State<HikingScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MoreStories extends StatefulWidget {
+  @override
+  _MoreStoriesState createState() => _MoreStoriesState();
+}
+
+class _MoreStoriesState extends State<MoreStories> {
+  final storyController = StoryController();
+
+  @override
+  void dispose() {
+    storyController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("More"),
+      ),
+      body: StoryView(
+        storyItems: [
+          StoryItem.text(
+            title: "I guess you'd love to see more of our Hikes. That's great.",
+            backgroundColor: Colors.blue,
+          ),
+          StoryItem.text(
+            title: "Nice!\n\nTap to continue.",
+            backgroundColor: Colors.red,
+            textStyle: TextStyle(
+              fontFamily: 'Dancing',
+              fontSize: 40,
+            ),
+          ),
+          StoryItem.pageImage(
+            url:
+            "https://hikemaniak.co.ke/wp-content/uploads/2023/05/4997C446-02D3-4131-A3A3-7F52DF0BC818_1_102_o-1024x1019.jpeg",
+            caption: Text(
+              "Lukenya Rock Climbing",
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            controller: storyController,
+          ),
+          StoryItem.pageImage(
+              url: "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif",
+              caption: Text(
+                "Working with gifs",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              controller: storyController),
+          StoryItem.pageImage(
+            url: "https://hikemaniak.co.ke/wp-content/uploads/2023/04/9018C913-51BB-4D0A-8D35-1B696E53E947-scaled-1-1024x717.jpeg",
+            caption: Text(
+              "4 Days Loita Hills Hike ‘N Camp",
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            controller: storyController,
+          ),
+          StoryItem.pageImage(
+            url: "https://hikemaniak.co.ke/wp-content/uploads/2023/04/L1330401e-1024x684.jpg",
+            caption: Text(
+              "Sleeping Warrior and Ugali Hills Excursion",
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            controller: storyController,
+          ),
+        ],
+        onStoryShow: (storyItem, index) {
+          print("Showing a story");
+        },
+        onComplete: () {
+          print("Completed a cycle");
+        },
+        progressPosition: ProgressPosition.top,
+        repeat: false,
+        controller: storyController,
       ),
     );
   }

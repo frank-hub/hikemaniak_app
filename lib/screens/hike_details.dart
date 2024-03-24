@@ -53,7 +53,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                           WidgetSpan(
                               child: Icon(Icons.calendar_month,
                                 color: lightColorScheme.primary,
-                                size: 26,
+                                size: 18,
                               )
                           ),
                           const TextSpan(
@@ -73,7 +73,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                           WidgetSpan(
                               child: Icon(Icons.group,
                                 color: lightColorScheme.primary,
-                                size: 26,
+                                size: 18,
                               )
                           ),
                           const TextSpan(
@@ -98,11 +98,11 @@ class _HikeDetailsState extends State<HikeDetails> {
                           WidgetSpan(
                               child: Icon(Icons.calendar_month,
                                 color: lightColorScheme.primary,
-                                size: 26,
+                                size: 18,
                               )
                           ),
                           const TextSpan(
-                            text: "From: 17-Mar-2024 19:00",
+                            text: "To: 17-Mar-2024 19:00",
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -118,7 +118,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                           WidgetSpan(
                               child: Icon(Icons.pin_drop,
                                 color: lightColorScheme.primary,
-                                size: 26,
+                                size: 18,
                               )
                           ),
                           const TextSpan(
@@ -144,7 +144,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                           WidgetSpan(
                               child: Icon(Icons.run_circle_rounded,
                                 color: lightColorScheme.primary,
-                                size: 26,
+                                size: 18,
                               )
                           ),
                           const TextSpan(
@@ -164,7 +164,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                           WidgetSpan(
                               child: Icon(Icons.group,
                                 color: lightColorScheme.primary,
-                                size: 26,
+                                size: 18,
                               )
                           ),
                           const TextSpan(

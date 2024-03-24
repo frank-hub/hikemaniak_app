@@ -177,6 +177,60 @@ class _SignInScreenState extends State<SignInScreen> {
                           child: const Text('Sign In'),
                         ),
                       ),
+                      SizedBox(height: 10,),
+                      InkWell(
+                        onTap: () {
+                          if (true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Processing Data'),
+                              ),
+                            );
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                HomeScreen()
+                            ));
+                          } else if (!rememberPassword) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Please agree to the processing of personal data')),
+                            );
+                          }
+                        },
+                        child: Container(
+                          height: 43,
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 8,horizontal: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.black12,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white70,
+                                offset: Offset(2.0, 2.0),
+                                blurRadius: 4.0,
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image(image: AssetImage('assets/images/google.png'
+                              ),
+                              height: 30,
+                              ),
+                              SizedBox(width: 20,),
+                              Text("Sign In With Google",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black45,
+
+                              ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(
                         height: 25.0,
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hikemaniak_app/screens/test.dart';
 import 'package:hikemaniak_app/widgets/bottom_nav_selector.dart';
 
 import '../theme.dart';
@@ -32,6 +33,14 @@ class _AccountState extends State<Account> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
+                      TextButton(
+                          onPressed:(){
+                            Navigator.push(context, MaterialPageRoute(builder:
+                            (context)=> Test()
+                            ));
+                          },
+
+                          child: Text("Hike Data")),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[

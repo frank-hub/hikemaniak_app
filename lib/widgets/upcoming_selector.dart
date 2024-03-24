@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hikemaniak_app/screens/hike_details.dart';
 
 import '../theme.dart';
 class UpcomingSelector extends StatefulWidget {
@@ -41,7 +42,9 @@ class _UpcomingSelectorState extends State<UpcomingSelector> {
             children: [
               GestureDetector(
                 onTap: () {
-
+                  Navigator.push(context, MaterialPageRoute(builder:
+                  (context)=> HikeDetails()
+                  ));
                 },
                 child: Card(
                   child: Container(

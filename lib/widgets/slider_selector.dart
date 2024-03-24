@@ -16,7 +16,7 @@ class _SliderSelectorState extends State<SliderSelector> {
           child: Image.asset(
             'assets/images/ladywriting.jpg',
             fit: BoxFit.cover,
-            height: 300,
+            height: 250,
             width: 380,
           ),
         ),
@@ -31,7 +31,7 @@ class _SliderSelectorState extends State<SliderSelector> {
           },
           child: Container(
             width: 380,
-            height: 300,
+            height: 250,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               gradient: LinearGradient(
@@ -58,7 +58,7 @@ class _SliderSelectorState extends State<SliderSelector> {
                   bottomRight: Radius.circular(8),
                 )),
             child: Center(
-              child: Text('TRENDING',
+              child: Text('STATUS',
                   style: TextStyle(
                     fontSize: 8,
                     color: Colors.white,
