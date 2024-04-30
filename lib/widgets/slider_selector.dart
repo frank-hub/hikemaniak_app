@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hikemaniak_app/screens/list_screen.dart';
 
 import '../screens/hiking_screen.dart';
 
@@ -25,7 +26,7 @@ class _SliderSelectorState extends State<SliderSelector> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => HikingScreen(),
+                builder: (context) => ListScreen(),
               ),
             );
           },

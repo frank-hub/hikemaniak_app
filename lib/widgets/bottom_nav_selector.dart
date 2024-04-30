@@ -70,7 +70,7 @@ class BottomNav extends StatelessWidget {
             borderRadius: BorderRadius.circular(20.0),
             child: Column(
               children: [
-                Icon(Icons.category, color: lightColorScheme.primary, size: 28),
+                Icon(Icons.category_outlined, color: lightColorScheme.primary, size: 28),
                 Text('Categories'),
               ],
             ),

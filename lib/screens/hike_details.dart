@@ -69,53 +69,76 @@ class _HikeDetailsState extends State<HikeDetails> {
                 color: lightColorScheme.primary,
               ),
               const SizedBox(height: 10,),
-              Center(
-                child: Text(hike.title ?? 'null',
-                  style: TextStyle(
-                    color: lightColorScheme.primary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                  ),
+              Text(capitalize(hike.title ?? 'null'),
+                style: TextStyle(
+                  color: lightColorScheme.primary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold
                 ),
               ),
               const SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   RichText(
+                    textAlign: TextAlign.center,
                     text: TextSpan(
                         children: [
                           WidgetSpan(
-                              child: Icon(Icons.calendar_month,
-                                color: lightColorScheme.primary,
-                                size: 18,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right
+                                    : 5.0),
+                                child: Icon(Icons.category_outlined,
+                                  color: lightColorScheme.primary,
+                                  size: 25,
+                                ),
                               )
                           ),
+                          const TextSpan(
+                            text:'Category: ',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
                           TextSpan(
-                            text:hike.date_time ?? '',
+                            text:hike.difficulty ?? '',
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 20,
                             ),
                           )
                         ]
                     ),
                   ),
-                  const SizedBox(width: 15,),
+                  const SizedBox(width: 50,),
                   RichText(
                     text: TextSpan(
                         children: [
                           WidgetSpan(
-                              child: Icon(Icons.group,
-                                color: lightColorScheme.primary,
-                                size: 18,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: Icon(Icons.group,
+                                  color: lightColorScheme.primary,
+                                  size: 25,
+                                ),
                               )
                           ),
                           const TextSpan(
-                            text: "Group: 5",
+                            text: "Group: ",
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          const TextSpan(
+                            text: "5",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
                             ),
                           )
                         ]
@@ -123,7 +146,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                   ),
                 ],
               ),
-              const SizedBox(height: 10,),
+              const SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -131,36 +154,55 @@ class _HikeDetailsState extends State<HikeDetails> {
                     text: TextSpan(
                         children: [
                           WidgetSpan(
-                              child: Icon(Icons.calendar_month,
-                                color: lightColorScheme.primary,
-                                size: 18,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: Icon(Icons.pin_drop,
+                                  color: lightColorScheme.primary,
+                                  size: 25,
+                                ),
                               )
                           ),
-                          const TextSpan(
-                            text: "To: 17-Mar-2024 19:00",
-                            style: TextStyle(
+                          TextSpan(
+                            text: capitalize('Location: '),
+                            style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          TextSpan(
+                            text: capitalize(hike.location ?? ''),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
                             ),
                           )
                         ]
                     ),
                   ),
-                  const SizedBox(width: 15,),
+                  const SizedBox(width: 90,),
                   RichText(
                     text: TextSpan(
                         children: [
                           WidgetSpan(
-                              child: Icon(Icons.pin_drop,
+                              child: Icon(Icons.run_circle_outlined,
                                 color: lightColorScheme.primary,
-                                size: 18,
+                                size: 25,
                               )
                           ),
-                          TextSpan(
-                            text: hike.location ?? '',
-                            style: const TextStyle(
+                          const TextSpan(
+                            text: "Difficulty: ",
+                            style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          const TextSpan(
+                            text: "4",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
                             ),
                           )
                         ]
@@ -168,8 +210,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                   ),
                 ],
               ),
-        
-              const SizedBox(height: 10,),
+              const SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -177,43 +218,55 @@ class _HikeDetailsState extends State<HikeDetails> {
                     text: TextSpan(
                         children: [
                           WidgetSpan(
-                              child: Icon(Icons.run_circle_rounded,
-                                color: lightColorScheme.primary,
-                                size: 18,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 5.0),
+                                child: Icon(Icons.today_sharp,
+                                  color: lightColorScheme.primary,
+                                  size: 25,
+                                ),
                               )
                           ),
                           const TextSpan(
-                            text: "Category:",
+                            text: "Date: ",
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
                             ),
                           ),
-                          TextSpan(
-                            text: hike.difficulty,
-                            style: const TextStyle(
+                          const TextSpan(
+                            text: '6',
+                            style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 20,
                             ),
                           )
                         ]
                     ),
                   ),
-                  const SizedBox(width: 115,),
+                  const SizedBox(width: 10,),
                   RichText(
                     text: TextSpan(
                         children: [
                           WidgetSpan(
-                              child: Icon(Icons.group,
+                              child: Icon(Icons.calendar_month,
                                 color: lightColorScheme.primary,
-                                size: 18,
+                                size: 25,
                               )
                           ),
                           const TextSpan(
-                            text: "Group: 5",
+                            text: "Min Age: ",
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 16,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          const TextSpan(
+                            text: "14",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
                             ),
                           )
                         ]
@@ -221,8 +274,8 @@ class _HikeDetailsState extends State<HikeDetails> {
                   ),
                 ],
               ),
-              const SizedBox(height: 15,),
-              const Text("Tour details",
+              const SizedBox(height: 20,),
+              const Text("Hike details",
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.blueGrey,
@@ -233,84 +286,137 @@ class _HikeDetailsState extends State<HikeDetails> {
               Text(
                 hike.desc ?? 'Hike Description'
               ),
+              const SizedBox(height: 20,),
+              const Text("What To Carry",
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.blueGrey,
+                    fontWeight: FontWeight.bold
+                ),
+              ),
               const SizedBox(height: 10,),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Start Point:",
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.blueGrey,
-                          fontWeight: FontWeight.bold
-                      )
-                    ),
-                    TextSpan(
-                      text: hike.start_point ?? '',
-                      style: TextStyle(
-                          fontSize: 19,
-                          color: Colors.black,
-                      )
-                    ),
-                  ]
+              Container(
+                height: 200,
+
+                child: ListView.builder(
+                  itemExtent: 28,
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      child: RichText(
+                        textAlign: TextAlign.start,
+                        text: const TextSpan(
+                          children: [
+                            WidgetSpan(
+                              child: Text(
+                                textAlign: TextAlign.center,
+                                '.',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                )
+                              )
+                            ),
+                            WidgetSpan(
+                                child: Text(
+                                    textAlign: TextAlign.center,
+                                    'Have rain Coat or umbrellas',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 20
+                                    )
+                                )
+                            ),
+
+                          ]
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                child: GestureDetector(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder:
-                        (context)=> MapPage(),
-                    ));
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: lightColorScheme.primary,
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: const Center(
-                      child: Text("VIEW TRAIL",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder:
+                            (context)=> const MapPage(),
+                        ));
+                      },
+                      child: Container(
+                        width: 150,
+                        height: 50,
+                        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                        decoration: BoxDecoration(
+                            color: lightColorScheme.primary,
+                            borderRadius: BorderRadius.circular(40)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(Icons.pin_drop_outlined,
+                            size: 25,
+                              color: Colors.white,
+                            ),
+                            Text("View Trail",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                fontWeight: FontWeight.w900
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: GestureDetector(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder:
-                        (context)=> BookHike(hikeId: hike.id.toString(),)
-                    ));
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 50,
-                    decoration: BoxDecoration(
-                        color: lightColorScheme.primary,
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: const Center(
-                      child: Text("BOOK NOW",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder:
+                            (context)=> BookHike(hikeId: hike.id.toString(),)
+                        ));
+                      },
+                      child: Container(
+                        width: 150,
+                        height: 50,
+                        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                        decoration: BoxDecoration(
+                            color: lightColorScheme.primary,
+                            borderRadius: BorderRadius.circular(40)
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(Icons.edit_calendar_outlined,
+                            size: 25,
+                              color: Colors.white,
+                            ),
+                            Text("Book Now",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                fontWeight: FontWeight.w900
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                ],
+              )
             ],
           ),
         ),
       ),
     );
   }
+  String capitalize(String s) => s.split(' ').map((word) => word.isNotEmpty ? word[0].toUpperCase() + word.substring(1) : '').join(' ');
+
 }

@@ -288,25 +288,36 @@ class _BookHikeState extends State<BookHike> {
                 ),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _bookNow,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: lightColorScheme.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _bookNow,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: lightColorScheme.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ),
-                child: Container(
-                  width: double.infinity,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "BOOK NOW",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+                  child: Container(
+                    width: 300,
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(Icons.payments_outlined,
+                          color: Colors.white,
+                            size: 25,
+                          ),
+                          Text(
+                            "Proceed To Payment",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),

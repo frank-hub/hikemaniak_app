@@ -9,6 +9,7 @@ import 'package:hikemaniak_app/widgets/bottom_nav_selector.dart';
 import '../model/hike.dart';
 import '../theme.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class ListScreen extends StatefulWidget {
   @override
@@ -47,6 +48,8 @@ List<Hike> hike =[];
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: BottomNav(),
@@ -172,7 +175,7 @@ List<Hike> hike =[];
                         },
                         child: Card(
                           child: Container(
-                            height: 335,
+                            height: 329,
                             width: 250,
                             padding: const EdgeInsets.all(10),
                             child:Column(
@@ -194,16 +197,12 @@ List<Hike> hike =[];
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       const SizedBox(height: 10,),
-                                      Text(hike[index].title ?? 'Title',
+                                      Text(capitalize(hike[index].title ?? 'Title'),
+
                                         style: TextStyle(
-                                            color: lightColorScheme.primary,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      Text(hike[index].date_time ?? 'Date & Time',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold
+                                          color: lightColorScheme.primary,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20
                                         ),
                                       ),
 
@@ -213,12 +212,17 @@ List<Hike> hike =[];
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             children: [
                                               Icon(Icons.pin_drop,
-                                                color: lightColorScheme.primary,),
+                                                color: lightColorScheme.primary,
+                                                size: 30,
+                                              ),
                                               Expanded(
-                                                child: Text(hike[index].location ?? 'Location',
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.black
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(left: 4.0),
+                                                  child: Text(capitalize(hike[index].location ?? 'Location'),
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: Colors.black
+                                                    ),
                                                   ),
                                                 ),
                                               )
@@ -235,7 +239,7 @@ List<Hike> hike =[];
                                                 hike[index].amount ?? 'amount',
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: 15,
+                                                    fontSize: 20,
                                                     color: lightColorScheme.primary
                                                 ),
                                               ),
@@ -243,18 +247,25 @@ List<Hike> hike =[];
                                           ),
                                         ],
                                       ),
+                                      SizedBox(height: 5,),
                                       RichText(text: TextSpan(
                                           children: [
                                             WidgetSpan(
-                                                child: Icon(Icons.hiking,
-                                                color: lightColorScheme.primary,
+                                                child: Container(
+
+                                                  child: Icon(Icons.category_outlined,
+                                                  color: lightColorScheme.primary,
+                                                    size: 30,
+                                                  ),
+                                                  padding: EdgeInsets.only(right: 5),
                                                 )
                                             ),
                                             TextSpan(
-                                                text: hike[index].difficulty ?? 'Levels',
+                                                text: capitalize(hike[index].difficulty ?? 'Levels'),
                                                 style: TextStyle(
                                                   color: Colors.black,
-                                                )
+                                                  fontSize: 18,
+                                                ),
                                             )
                                           ]
                                       )),
@@ -274,4 +285,6 @@ List<Hike> hike =[];
       ),
     );
   }
+  String capitalize(String s) => s.split(' ').map((word) => word.isNotEmpty ? word[0].toUpperCase() + word.substring(1) : '').join(' ');
+
 }

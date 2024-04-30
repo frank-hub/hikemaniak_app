@@ -5,10 +5,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:hikemaniak_app/constants.dart';
 import 'package:hikemaniak_app/theme.dart';
 import 'package:http/http.dart' as http;
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 //
@@ -70,8 +72,10 @@ class _AddHikeState extends State<AddHike> {
   TextEditingController descController = TextEditingController();
   TextEditingController date_timeController = TextEditingController();
   TextEditingController locationController = TextEditingController();
-  TextEditingController start_pointController = TextEditingController();
-  TextEditingController amountController = TextEditingController();
+  TextEditingController start_pointController = TextEditingController(text: "Nairobi");
+  TextEditingController ctzPriceController = TextEditingController();
+  TextEditingController restPriceController = TextEditingController();
+  TextEditingController trstPriceController = TextEditingController();
 
   Future<void> _requestLocationPermission() async {
     var status = await Permission.location.request();
@@ -107,7 +111,9 @@ class _AddHikeState extends State<AddHike> {
     request.fields['date_time'] = date_time.toIso8601String();
     request.fields['location'] = location;
     request.fields['start_point'] = start_point;
-    request.fields['amount'] = amount;
+    request.fields['ctnAmount'] = ctzPriceController.text;
+    request.fields['rstAmount'] = restPriceController.text;
+    request.fields['trstAmount'] = trstPriceController.text;
     // Add other fields as needed
 
     // Add image file to the request
@@ -151,7 +157,9 @@ class _AddHikeState extends State<AddHike> {
         start_pointController.clear();
         titleController.clear();
         descController.clear();
-        amountController.clear();
+        ctzPriceController.clear();
+        restPriceController.clear();
+        trstPriceController.clear();
 
       } else {
         // Request failed
@@ -174,250 +182,474 @@ class _AddHikeState extends State<AddHike> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Hike Creation',
-          style: TextStyle(
-            color: Colors.black,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Hike Creation',
+            style: TextStyle(
+              color: Colors.black,
+            ),
           ),
-        ),
-        centerTitle: true,
-
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Card(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: DropdownButton<String>(
-                    value: difficulty,
-                    onChanged: (newValue) {
-                      setState(() {
-                        difficulty = newValue!;
-                      });
-                    },
-                    items: ['Forest', 'Water', 'Rock', 'Alpine','Moorland','Camping']
-                        .map((serviceProvider) {
-                      return DropdownMenuItem<String>(
-                        value: serviceProvider,
-                        child: Text(serviceProvider),
-                      );
-                    }).toList(),
-                    hint: Text('Hike Difficulty'),
-                  ),
-                ),
+          centerTitle: false,
+          bottom: const TabBar(
+            tabs: [
+              Tab(
+                child: Text('New Trail'),
               ),
-              SizedBox(height: 16.0),
-              Card(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: TextField(
-                    controller: titleController,
-                    onChanged:(value){
-                      setState(() {
-                        title = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Hike Title'
-                    ),
-                  ),
-                ),
+              Tab(
+                child: Text('Edit Trails'),
               ),
-              SizedBox(height: 16.0),
-              Card(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: TextField(
-                    controller: descController,
-                    onChanged: (value) {
-                      setState(() {
-                        desc = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Hike Description',
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Card(
-                child: Container(
-                  child: Column(
-                    children: [
-                      _imageFile == null
-                          ? Placeholder() // Placeholder for image if no image is selected
-                          : Image.file(
-                        _imageFile!,
-                        height: 200,
-                        width: 200,
-                        fit: BoxFit.cover,
-                      ),
-                      ElevatedButton(
-                        onPressed: _getImage,
-                        child: Text('Upload Image'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Card(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: ListTile(
-                    title: Text('Date and Time'),
-                    subtitle: Text(date_time.toString()),
-                    onTap: () async {
-                      DateTime? pickedDateTime = await showDatePicker(
-                        context: context,
-                        initialDate: date_time,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2101),
-                      );
-                      if (pickedDateTime != null) {
-                        TimeOfDay? pickedTime = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.fromDateTime(date_time),
-                        );
-                        if (pickedTime != null) {
-                          setState(() {
-                            date_time = DateTime(
-                              pickedDateTime.year,
-                              pickedDateTime.month,
-                              pickedDateTime.day,
-                              pickedTime.hour,
-                              pickedTime.minute,
-                            );
-                          });
-                        }
-                      }
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              // Container(
-              //   height: 200.0,
-              //   child: GoogleMap(
-              //     onMapCreated: (GoogleMapController controller) {
-              //       setState(() {
-              //         mapController = controller;
-              //       });
-              //     },
-              //     initialCameraPosition: CameraPosition(
-              //       target: _selectedLocation,
-              //       zoom: 13.0,
-              //     ),
-              //     markers: Set<Marker>.of([
-              //       Marker(
-              //         markerId: MarkerId('selectedLocation'),
-              //         position: _selectedLocation,
-              //       ),
-              //     ]),
-              //     onTap: (LatLng latLng) {
-              //       setState(() {
-              //         _selectedLocation = latLng;
-              //       });
-              //     },
-              //   ),
-              // ),
-              SizedBox(height: 16.0),
-              Card(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: TextField(
-                    controller: locationController,
-                    onChanged: (value) {
-                      setState(() {
-                        location = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Hike Location',
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Card(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: TextField(
-                    controller: start_pointController,
-                    onChanged: (value) {
-                      setState(() {
-                        start_point = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Start Point',
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Card(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: TextField(
-                    controller: start_pointController,
-                    onChanged: (value) {
-                      setState(() {
-                        start_point = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'End Point',
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Card(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: TextField(
-                    controller: amountController,
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        amount = value;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Amount',
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16,),
-              GestureDetector(
-                onTap: _createEvent, // Call _createEvent method on tap
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: lightColorScheme.primary,
-                      borderRadius: BorderRadius.circular(10)
-                  ),
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  child: const Center(
-                    child: Text(
-                      'Create Hike',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-              )
             ],
           ),
+        ),
+        body: TabBarView(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: difficulty,
+                          onChanged: (newValue) {
+                            setState(() {
+                              difficulty = newValue!;
+                            });
+                          },
+                          items: ['Forest', 'Water', 'Rock', 'Alpine','Moorland','Camping']
+                              .map((serviceProvider) {
+                            return DropdownMenuItem<String>(
+                              value: serviceProvider,
+                              child: Text(serviceProvider,
+                                style: TextStyle(
+                                    color: Color(0xff545454),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          hint: Text('Hike Difficulty'),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: titleController,
+                          onChanged:(value){
+                            setState(() {
+                              title = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Hike Title',
+                            labelStyle: TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:lightColorScheme.primary),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: lightColorScheme.primary),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: descController,
+                          onChanged: (value) {
+                            setState(() {
+                              desc = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Hike Description',
+                            labelStyle: TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:lightColorScheme.primary),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: lightColorScheme.primary),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        child: Column(
+                          children: [
+                            _imageFile == null
+                                ? Placeholder() // Placeholder for image if no image is selected
+                                : Image.file(
+                              _imageFile!,
+                              height: 200,
+                              width: 200,
+                              fit: BoxFit.cover,
+                            ),
+                            ElevatedButton(
+                              onPressed: _getImage,
+                              child: Text('Upload Image'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: ListTile(
+                          title: Text('Date and Time',
+                            style:TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          subtitle: Text(date_time.toString()),
+                          onTap: () async {
+                            DateTime? pickedDateTime = await showDatePicker(
+                              context: context,
+                              initialDate: date_time,
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime(2101),
+                            );
+                            if (pickedDateTime != null) {
+                              TimeOfDay? pickedTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.fromDateTime(date_time),
+                              );
+                              if (pickedTime != null) {
+                                setState(() {
+                                  date_time = DateTime(
+                                    pickedDateTime.year,
+                                    pickedDateTime.month,
+                                    pickedDateTime.day,
+                                    pickedTime.hour,
+                                    pickedTime.minute,
+                                  );
+                                });
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    // Container(
+                    //   height: 200.0,
+                    //   child: GoogleMap(
+                    //     onMapCreated: (GoogleMapController controller) {
+                    //       setState(() {
+                    //         mapController = controller;
+                    //       });
+                    //     },
+                    //     initialCameraPosition: CameraPosition(
+                    //       target: _selectedLocation,
+                    //       zoom: 13.0,
+                    //     ),
+                    //     markers: Set<Marker>.of([
+                    //       Marker(
+                    //         markerId: MarkerId('selectedLocation'),
+                    //         position: _selectedLocation,
+                    //       ),
+                    //     ]),
+                    //     onTap: (LatLng latLng) {
+                    //       setState(() {
+                    //         _selectedLocation = latLng;
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: locationController,
+                          onChanged: (value) {
+                            setState(() {
+                              location = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Hike Location',
+                            labelStyle: TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:lightColorScheme.primary),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: lightColorScheme.primary),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child:Column(
+                          children: [
+                            TextField(
+                              controller: start_pointController,
+                              decoration: InputDecoration(
+                                labelText: "Start Location",
+                                labelStyle: TextStyle(
+                                    color: Color(0xff545454),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color:lightColorScheme.primary),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: lightColorScheme.primary),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(Icons.search),
+                                  onPressed: () async {
+                                    Prediction? prediction = await PlacesAutocomplete.show(
+                                      context: context,
+                                      apiKey: PLACES_API,
+                                      mode: Mode.overlay, // Change to fullscreen if preferred
+                                    );
+
+                                    if (prediction != null) {
+                                      setState(() {
+                                        start_pointController.text = prediction.description!;
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                            // Display the selected location description (optional)
+                            Text(start_pointController.text),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: start_pointController,
+                          onChanged: (value) {
+                            setState(() {
+                              start_point = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'End Point',
+                            labelStyle: TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:lightColorScheme.primary),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: lightColorScheme.primary),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: ctzPriceController,
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            setState(() {
+                              ctzPriceController.text = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Citizen Price (Ksh)',
+                            labelStyle: TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:lightColorScheme.primary),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: lightColorScheme.primary),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: restPriceController,
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            setState(() {
+                              restPriceController.text = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Resident Price (Ksh)',
+                            labelStyle: TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:lightColorScheme.primary),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: lightColorScheme.primary),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: trstPriceController,
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            setState(() {
+                              trstPriceController.text = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Tourist Price (USD)',
+                            labelStyle: TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:lightColorScheme.primary),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: lightColorScheme.primary),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16,),
+                    Text(
+                      'What To Carry',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    TextFormField(
+                      decoration: InputDecoration(
+                        hintText: 'Equipment, Consumables, outfit etc.',
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Additional activities',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    CheckboxListTile(
+                      title: Text('Village Experience'),
+                      value: true,
+                      onChanged: (value) {},
+                    ),
+                    CheckboxListTile(
+                      title: Text('Culture Show'),
+                      value: false,
+                      onChanged: (value) {},
+                    ),
+                    CheckboxListTile(
+                      title: Text('Bird Watching'),
+                      value: false,
+                      onChanged: (value) {},
+                    ),
+                    CheckboxListTile(
+                      title: Text('Swimming'),
+                      value: false,
+                      onChanged: (value) {},
+                    ),
+                    CheckboxListTile(
+                      title: Text('Local Cuisines'),
+                      value: false,
+                      onChanged: (value) {},
+                    ),
+                    CheckboxListTile(
+                      title: Text('Other'),
+                      value: false,
+                      onChanged: (value) {},
+                    ),
+                    GestureDetector(
+                      onTap: _createEvent, // Call _createEvent method on tap
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: lightColorScheme.primary,
+                            borderRadius: BorderRadius.circular(10)
+                        ),
+                        height: 50,
+                        width: MediaQuery.of(context).size.width,
+                        child: const Center(
+                          child: Text(
+                            'Create Hike',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              height: 200,
+              width: double.infinity,
+              color: lightColorScheme.primary,
+            )
+          ],
         ),
       ),
     );
