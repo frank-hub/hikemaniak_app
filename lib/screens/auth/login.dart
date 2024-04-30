@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hikemaniak_app/constants.dart';
 import 'package:hikemaniak_app/screens/auth/register.dart';
 import 'package:hikemaniak_app/screens/home.dart';
+import 'package:hikemaniak_app/screens/map_trail.dart';
 import 'package:hikemaniak_app/theme.dart';
 import 'package:hikemaniak_app/widgets/custom_scaffold.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -15,6 +20,59 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+
+  Future<void> _login(BuildContext context) async {
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text.trim();
+
+    try {
+      final response = await http.post(
+        Uri.parse('$BASE_URL/login'),
+        body: {'email': email, 'password': password},
+      );
+
+      if (response.statusCode == 200) {
+        // Login successful, navigate to home screen
+        bool isAuthenticated = true;
+
+        if (isAuthenticated) {
+
+          var responseData = json.decode(response.body);
+          var token = responseData['token'];
+
+          // Store token securely on the device
+          // For example, using shared preferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('token', token);
+
+          // Navigate to the home screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        }
+      } else {
+        // Login failed, show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Login failed. Please check your credentials.'+response.body.toString()),
+          ),
+        );
+      }
+    } catch (error) {
+      print('Error: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error occurred while logging in.'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -55,6 +113,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         height: 40.0,
                       ),
                       TextFormField(
+                        controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Email';
@@ -85,6 +144,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         height: 25.0,
                       ),
                       TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -139,6 +199,11 @@ class _SignInScreenState extends State<SignInScreen> {
                             ],
                           ),
                           GestureDetector(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder:
+                              (context)=> const MapPage()
+                              ));
+                            },
                             child: Text(
                               'Forget password?',
                               style: TextStyle(
@@ -163,9 +228,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   content: Text('Processing Data'),
                                 ),
                               );
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                                  HomeScreen()
-                              ));
+                              _login(context);
                             } else if (!rememberPassword) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -249,7 +312,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               horizontal: 10,
                             ),
                             child: Text(
-                              'Sign up with',
+                              'Sign In with',
                               style: TextStyle(
                                 color: Colors.black45,
                               ),
@@ -261,6 +324,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               color: Colors.grey.withOpacity(0.5),
                             ),
                           ),
+
                         ],
                       ),
                       const SizedBox(

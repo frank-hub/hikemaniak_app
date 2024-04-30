@@ -1,41 +1,76 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hikemaniak_app/constants.dart';
 import 'package:hikemaniak_app/screens/book_hike.dart';
+import 'package:hikemaniak_app/screens/map_trail.dart';
 import 'package:hikemaniak_app/theme.dart';
+import 'package:http/http.dart' as http;
+import '../model/hike.dart';
 
 class HikeDetails extends StatefulWidget {
-  const HikeDetails({super.key});
+  final String hikeId;
+  const HikeDetails({super.key, required this.hikeId});
 
   @override
   State<HikeDetails> createState() => _HikeDetailsState();
 }
 
 class _HikeDetailsState extends State<HikeDetails> {
+  late Hike hike = Hike();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHikeDetails();
+  }
+
+  Future<void> fetchHikeDetails() async {
+    final url = Uri.parse('$BASE_URL/hike/show/${widget.hikeId}');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      // Decode the response body
+      Map<String, dynamic> responseData = json.decode(response.body);
+
+      // Extract the event details from the "data" object
+      Map<String, dynamic> hikeData = responseData['data'];
+
+      setState(() {
+        // Pass the extracted event data to Event.fromJson
+        hike = Hike.fromJson(hikeData);
+      });
+    } else {
+      throw Exception('Failed to load event details');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hike Details'),
+        title: const Text('Hike Details'),
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset("assets/images/details.jpg",
+              Image.network(hike.image ?? 'null',
                 fit: BoxFit.cover,
                 height: 300,
               ),
               Container(
-                margin: EdgeInsets.only(top: 10),
+                margin: const EdgeInsets.only(top: 10),
                 height: 2,
                 width: double.infinity,
                 color: lightColorScheme.primary,
               ),
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               Center(
-                child: Text("Mt Kenya Day Dash – Sirimon",
+                child: Text(hike.title ?? 'null',
                   style: TextStyle(
                     color: lightColorScheme.primary,
                     fontSize: 20,
@@ -43,7 +78,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                   ),
                 ),
               ),
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -56,9 +91,9 @@ class _HikeDetailsState extends State<HikeDetails> {
                                 size: 18,
                               )
                           ),
-                          const TextSpan(
-                            text: "From: 15-Mar-2024 11:00",
-                            style: TextStyle(
+                          TextSpan(
+                            text:hike.date_time ?? '',
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                             ),
@@ -66,7 +101,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                         ]
                     ),
                   ),
-                  SizedBox(width: 15,),
+                  const SizedBox(width: 15,),
                   RichText(
                     text: TextSpan(
                         children: [
@@ -88,7 +123,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                   ),
                 ],
               ),
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -111,7 +146,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                         ]
                     ),
                   ),
-                  SizedBox(width: 15,),
+                  const SizedBox(width: 15,),
                   RichText(
                     text: TextSpan(
                         children: [
@@ -121,9 +156,9 @@ class _HikeDetailsState extends State<HikeDetails> {
                                 size: 18,
                               )
                           ),
-                          const TextSpan(
-                            text: "Mt Kenya Lenana",
-                            style: TextStyle(
+                          TextSpan(
+                            text: hike.location ?? '',
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                             ),
@@ -134,7 +169,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                 ],
               ),
         
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -148,8 +183,15 @@ class _HikeDetailsState extends State<HikeDetails> {
                               )
                           ),
                           const TextSpan(
-                            text: "Difficulty: 4",
+                            text: "Category:",
                             style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                          ),
+                          TextSpan(
+                            text: hike.difficulty,
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                             ),
@@ -157,7 +199,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                         ]
                     ),
                   ),
-                  SizedBox(width: 115,),
+                  const SizedBox(width: 115,),
                   RichText(
                     text: TextSpan(
                         children: [
@@ -179,19 +221,19 @@ class _HikeDetailsState extends State<HikeDetails> {
                   ),
                 ],
               ),
-              SizedBox(height: 15,),
-              Text("Tour details",
+              const SizedBox(height: 15,),
+              const Text("Tour details",
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.blueGrey,
                 fontWeight: FontWeight.bold
               ),
               ),
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               Text(
-                "Are you ready to transcend ordinary mountain adventures? Join us for the Mt Kenya Dash, a journey beyond the ordinary, where reaching the summits is not just a goal; it’s a profound connection with self and nature. Our mission is to experience every moment, to savor the breathtaking views, and to revel in the beauty of this snow-capped East African giant, perfectly situated at the Equator."
+                hike.desc ?? 'Hike Description'
               ),
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
               RichText(
                 text: TextSpan(
                   children: [
@@ -204,7 +246,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                       )
                     ),
                     TextSpan(
-                      text: "Sirimon Gate (2950m ASL)",
+                      text: hike.start_point ?? '',
                       style: TextStyle(
                           fontSize: 19,
                           color: Colors.black,
@@ -214,31 +256,57 @@ class _HikeDetailsState extends State<HikeDetails> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 child: GestureDetector(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder:
-                    (context)=> const BookHike()
+                        (context)=> MapPage(),
                     ));
                   },
                   child: Container(
-                  width: double.infinity,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: lightColorScheme.primary,
-                    borderRadius: BorderRadius.circular(10)
-                  ),
-                  child: Center(
-                    child: Text("BOOK NOW",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: lightColorScheme.primary,
+                        borderRadius: BorderRadius.circular(10)
                     ),
+                    child: const Center(
+                      child: Text("VIEW TRAIL",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18
+                        ),
+                      ),
                     ),
-                  ),
                   ),
                 ),
-              )
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder:
+                        (context)=> BookHike(hikeId: hike.id.toString(),)
+                    ));
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: lightColorScheme.primary,
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: const Center(
+                      child: Text("BOOK NOW",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hikemaniak_app/constants.dart';
 import 'package:hikemaniak_app/theme.dart';
 import 'package:hikemaniak_app/widgets/custom_scaffold.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../home.dart';
 import 'login.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -15,6 +21,51 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
+  bool rememberPassword = true;
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
+  Future<void> _registerUser() async {
+    const String url = '$BASE_URL/register';
+    final Map<String, String> data = {
+      'name': _usernameController.text,
+      'email': _emailController.text,
+      'phone': _phoneController.text,
+      'password': _passwordController.text,
+    };
+
+    final response = await http.post(Uri.parse(url), body: data);
+
+    if (response.statusCode == 200) {
+      var responseData = json.decode(response.body);
+      var token = responseData['token'];
+
+      // Store token securely on the device
+      // For example, using shared preferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', token);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+    } else {
+      // Registration failed
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Registration Failed'),
+          content: Text('Failed to register user. Please try again later.'+response.body.toString()),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -29,7 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Expanded(
             flex: 7,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
+              padding: const EdgeInsets.fromLTRB(25.0, 35.0, 25.0, 20.0),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -54,10 +105,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(
-                        height: 40.0,
+                        height: 20.0,
                       ),
                       // full name
                       TextFormField(
+                        controller: _usernameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Full name';
@@ -89,6 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // email
                       TextFormField(
+                        controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Email';
@@ -120,6 +173,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // password
                       TextFormField(
+                        controller: _phoneController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter Phone';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          label: const Text('Phone'),
+                          hintText: 'Enter Phone',
+                          hintStyle: const TextStyle(
+                            color: Colors.black26,
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Colors.black12, // Default border color
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Colors.black12, // Default border color
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 25.0,
+                      ),
+                      // password
+                      TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -149,7 +235,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(
-                        height: 25.0,
+                        height: 10.0,
                       ),
                       // i agree to the processing
                       Row(
@@ -179,7 +265,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ],
                       ),
                       const SizedBox(
-                        height: 25.0,
+                        height: 10.0,
                       ),
                       // signup button
                       SizedBox(
@@ -193,6 +279,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   content: Text('Processing Data'),
                                 ),
                               );
+                              _registerUser();
                             } else if (!agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -236,6 +323,60 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                         ],
+                      ),
+                      SizedBox(height: 10,),
+                      InkWell(
+                        onTap: () {
+                          if (true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Processing Data'),
+                              ),
+                            );
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                HomeScreen()
+                            ));
+                          } else if (!rememberPassword) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Please agree to the processing of personal data')),
+                            );
+                          }
+                        },
+                        child: Container(
+                          height: 43,
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 8,horizontal: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.black12,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white70,
+                                offset: Offset(2.0, 2.0),
+                                blurRadius: 4.0,
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image(image: AssetImage('assets/images/google.png'
+                              ),
+                                height: 30,
+                              ),
+                              SizedBox(width: 20,),
+                              Text("Sign In With Google",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black45,
+
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                       const SizedBox(
                         height: 30.0,

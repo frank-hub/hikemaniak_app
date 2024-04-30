@@ -43,7 +43,7 @@ class _UpcomingSelectorState extends State<UpcomingSelector> {
               GestureDetector(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder:
-                  (context)=> HikeDetails()
+                  (context)=> HikeDetails(hikeId: '5',)
                   ));
                 },
                 child: Card(

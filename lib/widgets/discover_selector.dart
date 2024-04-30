@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:hikemaniak_app/theme.dart';
 
 class DiscoverSelector extends StatefulWidget {
+  String userName;
+
+  DiscoverSelector({super.key,required  this.userName });
+
+
   @override
   _DiscoverSelectorState createState() => _DiscoverSelectorState();
 }
 
 class _DiscoverSelectorState extends State<DiscoverSelector> {
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -29,6 +35,9 @@ class _DiscoverSelectorState extends State<DiscoverSelector> {
                     fontFamily: 'Montserrat',
                   ),
                 ),
+                Text(widget.userName.toUpperCase(),
+                    style: TextStyle(
+                        fontSize: 14, color: Colors.black.withOpacity(0.35))),
                 Text('Trending Activities everywhere',
                     style: TextStyle(
                         fontSize: 14, color: Colors.black.withOpacity(0.35))),

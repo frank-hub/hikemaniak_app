@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hikemaniak_app/constants.dart';
 import 'package:hikemaniak_app/screens/hike_details.dart';
 import 'package:hikemaniak_app/screens/map_screen.dart';
 import 'package:hikemaniak_app/widgets/bottom_nav_selector.dart';
 
+import '../model/hike.dart';
 import '../theme.dart';
+import 'package:http/http.dart' as http;
 
 class ListScreen extends StatefulWidget {
   @override
@@ -11,6 +16,35 @@ class ListScreen extends StatefulWidget {
 }
 
 class _ListScreenState extends State<ListScreen> {
+List<Hike> hike =[];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHike();
+  }
+
+  Future<void> fetchHike() async {
+    final response = await http.get(Uri.parse('$BASE_URL/hike/index'));
+    debugPrint('worked');
+
+    if (response.statusCode == 200) {
+
+      // Decode the response body into a map
+      Map<String, dynamic> responseData = json.decode(response.body);
+
+      // Extract the list of events from the map using the appropriate key
+      List<dynamic> hikeData = responseData['data'];
+
+      setState(() {
+        hike = hikeData.map((data) => Hike.fromJson(data)).toList();
+      });
+    } else {
+      throw Exception('Failed to load events');
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,12 +162,12 @@ class _ListScreenState extends State<ListScreen> {
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
                 width: double.infinity,
                 child: ListView.builder(
-                    itemCount: 5,
+                    itemCount: hike.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder:
-                          (context)=> HikeDetails()
+                          (context)=> HikeDetails(hikeId:hike[index].id.toString())
                           ));
                         },
                         child: Card(
@@ -146,9 +180,9 @@ class _ListScreenState extends State<ListScreen> {
                                 Container(
                                   height: 200,
                                   decoration: BoxDecoration(
-                                      image: const DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/test.jpg'),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                            hike[index].image ?? 'assets/images/test.jpg'),
                                         fit: BoxFit.fill,
                                       ),
                                       borderRadius: BorderRadius.circular(10)
@@ -160,13 +194,13 @@ class _ListScreenState extends State<ListScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       const SizedBox(height: 10,),
-                                      Text('4 Days Mt Kenya Naromoru -Sirimon',
+                                      Text(hike[index].title ?? 'Title',
                                         style: TextStyle(
                                             color: lightColorScheme.primary,
                                             fontWeight: FontWeight.bold
                                         ),
                                       ),
-                                      const Text('August 15, 2024',
+                                      Text(hike[index].date_time ?? 'Date & Time',
                                         style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold
@@ -181,7 +215,7 @@ class _ListScreenState extends State<ListScreen> {
                                               Icon(Icons.pin_drop,
                                                 color: lightColorScheme.primary,),
                                               Expanded(
-                                                child: Text('Naromoru',
+                                                child: Text(hike[index].location ?? 'Location',
                                                   style: TextStyle(
                                                       fontSize: 12,
                                                       color: Colors.black
@@ -193,10 +227,12 @@ class _ListScreenState extends State<ListScreen> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
-                                              Text("From"),
-                                              SizedBox(width: 5,),
+                                              Icon(Icons.attach_money,
+                                                color: lightColorScheme.primary,
+                                                size: 20,
+                                              ),
                                               Text(
-                                                '44500',
+                                                hike[index].amount ?? 'amount',
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 15,
@@ -206,7 +242,22 @@ class _ListScreenState extends State<ListScreen> {
                                             ],
                                           ),
                                         ],
-                                      )
+                                      ),
+                                      RichText(text: TextSpan(
+                                          children: [
+                                            WidgetSpan(
+                                                child: Icon(Icons.hiking,
+                                                color: lightColorScheme.primary,
+                                                )
+                                            ),
+                                            TextSpan(
+                                                text: hike[index].difficulty ?? 'Levels',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                )
+                                            )
+                                          ]
+                                      )),
                                     ],
                                   ),
                                 )

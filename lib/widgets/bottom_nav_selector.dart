@@ -18,7 +18,7 @@ class BottomNav extends StatelessWidget {
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
-        color: lightColorScheme.primary.withOpacity(0.3),
+        color: Colors.grey.withOpacity(0.2),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

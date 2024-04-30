@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hikemaniak_app/screens/admin/home.dart';
+import 'package:hikemaniak_app/screens/guide/home.dart';
 import 'package:hikemaniak_app/screens/test.dart';
 import 'package:hikemaniak_app/widgets/bottom_nav_selector.dart';
 
@@ -215,6 +218,61 @@ class _AccountState extends State<Account> {
                         ),
                         Icon(Icons.keyboard_arrow_right)
                       ],
+                    ),
+                    const SizedBox(height: 20,),
+                    Container(
+                      height: 1,
+                      width: double.infinity,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 20,),
+                    InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder:
+                            (context)=> HomeAdmin()
+                        ));
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.admin_panel_settings_outlined),
+                              SizedBox(width: 10,),
+                              Text('Admin Portal')
+                            ],
+                          ),
+                          Icon(Icons.keyboard_arrow_right)
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20,),
+                    Container(
+                      height: 1,
+                      width: double.infinity,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 20,),
+
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder:
+                        (context)=> HomeGuide()
+                        ));
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.hiking),
+                              SizedBox(width: 10,),
+                              Text('Guide Portal')
+                            ],
+                          ),
+                          Icon(Icons.keyboard_arrow_right)
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 20,),
                     Container(
