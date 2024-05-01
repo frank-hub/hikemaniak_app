@@ -76,6 +76,9 @@ class _AddHikeState extends State<AddHike> {
   TextEditingController ctzPriceController = TextEditingController();
   TextEditingController restPriceController = TextEditingController();
   TextEditingController trstPriceController = TextEditingController();
+  TextEditingController maxController = TextEditingController();
+  TextEditingController minAgeController = TextEditingController();
+
 
   Future<void> _requestLocationPermission() async {
     var status = await Permission.location.request();
@@ -85,6 +88,7 @@ class _AddHikeState extends State<AddHike> {
   }
 
   String difficulty = 'Forest';
+  String difficulty_level = '1 Easy';
   String title = '';
   String desc = '';
   String image = '';
@@ -92,6 +96,8 @@ class _AddHikeState extends State<AddHike> {
   String location = '';
   String start_point = '';
   String amount = '';
+
+  bool addActivities = false;
 
 
   Future<void> _createEvent() async {
@@ -210,7 +216,7 @@ class _AddHikeState extends State<AddHike> {
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Card(
                       child: Container(
@@ -571,16 +577,35 @@ class _AddHikeState extends State<AddHike> {
                       ),
                     ),
                     SizedBox(height: 16,),
-                    Text(
-                      'What To Carry',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        hintText: 'Equipment, Consumables, outfit etc.',
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'What To Carry',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Color(0xff545454),
+                              ),
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                hintText: 'Equipment, Consumables, outfit etc.',
+
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color:lightColorScheme.primary),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: lightColorScheme.primary),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 16),
@@ -591,52 +616,214 @@ class _AddHikeState extends State<AddHike> {
                         fontSize: 18,
                       ),
                     ),
-                    CheckboxListTile(
-                      title: Text('Village Experience'),
-                      value: true,
-                      onChanged: (value) {},
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Theme(
+                                data: Theme.of(context).copyWith(
+                                  unselectedWidgetColor: Colors.orange, // Color of the unchecked checkbox
+                                ),
+                                child: Checkbox(
+                                  value: false,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      addActivities = value ?? false;
+                                      print('Checkbox value: $addActivities');
+                                    });
+                                  },
+                                  checkColor: Colors.orange,
+                                  activeColor: Colors.transparent,
+                                ),
+                              ),
+                              Text('Village Experience'),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: false,
+                                onChanged: (bool? value) {},
+                                checkColor: Colors.orange, // Color of the check icon
+                                activeColor: Colors.transparent, // Color of the check box when checked
+                              ),
+                              Text('Culture Show'),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    CheckboxListTile(
-                      title: Text('Culture Show'),
-                      value: false,
-                      onChanged: (value) {},
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: false,
+                                onChanged: (value) {},
+                              ),
+                              Text('Bird Watching'),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: false,
+                                onChanged: (value) {},
+                              ),
+                              Text('Swimming'),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    CheckboxListTile(
-                      title: Text('Bird Watching'),
-                      value: false,
-                      onChanged: (value) {},
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: false,
+                                onChanged: (value) {},
+                              ),
+                              Text('Local Cuisines'),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: false,
+                                onChanged: (value) {},
+                              ),
+                              Text('Other'),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    CheckboxListTile(
-                      title: Text('Swimming'),
-                      value: false,
-                      onChanged: (value) {},
+                    SizedBox(height: 16,),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: difficulty_level,
+                          onChanged: (newValue) {
+                            setState(() {
+                              difficulty_level = newValue!;
+                            });
+                          },
+                          items: ['1 Easy', '2 Moderate', '3 Hard', '4 Very Hard']
+                              .map((serviceProvider) {
+                            return DropdownMenuItem<String>(
+                              value: serviceProvider,
+                              child: Text(serviceProvider,
+                                style: TextStyle(
+                                    color: Color(0xff545454),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          hint: Text('Difficulty Levels'),
+                        ),
+                      ),
                     ),
-                    CheckboxListTile(
-                      title: Text('Local Cuisines'),
-                      value: false,
-                      onChanged: (value) {},
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: titleController,
+                          keyboardType: TextInputType.number,
+                          onChanged:(value){
+                            setState(() {
+                              title = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Maximum Group Size',
+                            labelStyle: TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:lightColorScheme.primary),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: lightColorScheme.primary),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    CheckboxListTile(
-                      title: Text('Other'),
-                      value: false,
-                      onChanged: (value) {},
+                    SizedBox(height: 16.0),
+                    Card(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: TextField(
+                          controller: descController,
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            setState(() {
+                              desc = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Minimum Age',
+                            labelStyle: TextStyle(
+                                color: Color(0xff545454),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color:lightColorScheme.primary),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: lightColorScheme.primary),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
+                    SizedBox(height: 16.0),
+
                     GestureDetector(
                       onTap: _createEvent, // Call _createEvent method on tap
                       child: Container(
+                        height: 50,
+                        width: 150,
+                        padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                         decoration: BoxDecoration(
                             color: lightColorScheme.primary,
                             borderRadius: BorderRadius.circular(10)
                         ),
-                        height: 50,
-                        width: MediaQuery.of(context).size.width,
-                        child: const Center(
-                          child: Text(
-                            'Create Hike',
-                            style: TextStyle(
-                              color: Colors.black,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.save,
+                              size: 25,
+                              color: Colors.white,
                             ),
-                          ),
+                            SizedBox(width: 10,),
+                            Text(
+                              'Save',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w900
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     )
@@ -645,10 +832,90 @@ class _AddHikeState extends State<AddHike> {
               ),
             ),
             Container(
-              height: 200,
-              width: double.infinity,
-              color: lightColorScheme.primary,
-            )
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: ListView.builder(
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      height: 150,
+                      width: double.infinity,
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              const Image(image: AssetImage('assets/images/details.jpg')),
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text("Ref# 2001",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            letterSpacing: 0.2
+                                        ),
+                                      ),
+                                      const Text("Mt Kenya Day Dash – Sirimon",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            letterSpacing: 0.2
+                                        ),
+                                      ),
+                                      const SizedBox(height: 1,),
+                                      const Text("Cyrus Doe",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            letterSpacing: 0.2
+                                        ),
+                                      ),
+                                      const SizedBox(height: 1,),
+                                      const Text("17-Mar-2024 19:00",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            letterSpacing: 0.2
+                                        ),
+                                      ),
+                                      SizedBox(height: 13,),
+                                      GestureDetector(
+                                        onTap: _createEvent, // Call _createEvent method on tap
+                                        child: Container(
+                                          height: 30,
+                                          width: 30,
+                                          padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                                          decoration: BoxDecoration(
+                                              color: lightColorScheme.primary,
+                                              borderRadius: BorderRadius.circular(10)
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.edit,
+                                                size: 18,
+                                                color: Colors.white,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                )
+            ),
           ],
         ),
       ),
