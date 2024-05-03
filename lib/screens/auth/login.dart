@@ -200,9 +200,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           GestureDetector(
                             onTap: (){
-                              Navigator.push(context, MaterialPageRoute(builder:
-                              (context)=> const MapPage()
-                              ));
+
                             },
                             child: Text(
                               'Forget password?',

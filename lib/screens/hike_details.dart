@@ -344,7 +344,12 @@ class _HikeDetailsState extends State<HikeDetails> {
                     child: GestureDetector(
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(builder:
-                            (context)=> const MapPage(),
+                            (context)=> MapPage(
+                              start_lat: hike.start_lat.toString(),
+                              start_lng:hike.start_lng.toString(),
+                              end_lat: hike.end_lat.toString(),
+                              end_lng: hike.end_lng.toString(),
+                            ),
                         ));
                       },
                       child: Container(

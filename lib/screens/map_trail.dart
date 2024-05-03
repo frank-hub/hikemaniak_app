@@ -3,38 +3,55 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:hikemaniak_app/constants.dart';
 import 'package:location/location.dart';
 
+import '../constants.dart';
+
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+  final String start_lat;
+  final String start_lng;
+  final String end_lat;
+  final String end_lng;
+  const MapPage({Key? key, required this.start_lat, required this.start_lng, required this.end_lat, required this.end_lng}) : super(key: key);
 
   @override
   State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
-  Location _locationController = new Location();
+  Location _locationController = Location();
 
   final Completer<GoogleMapController> _mapController =
   Completer<GoogleMapController>();
+  late double start_latcod;
+  late double start_lng;
+  late double end_lat;
+  late double end_lng;
 
-  static const LatLng _pGooglePlex = LatLng(-1.518430, 37.266899);
-  static const LatLng _pApplePark = LatLng(-1.365010, 38.011570);
-  LatLng? _currentP = null;
+  late LatLng _pStartPoint;
+  late LatLng _pEndPoint;
+  LatLng? _currentP;
 
   Map<PolylineId, Polyline> polylines = {};
 
   @override
   void initState() {
     super.initState();
-    getLocationUpdates().then(
-          (_) => {
-        getPolylinePoints().then((coordinates) => {
-          generatePolyLineFromPoints(coordinates),
-        }),
-      },
-    );
+    start_latcod = double.parse(widget.start_lat);
+    start_lng = double.parse(widget.start_lng);
+    end_lat = double.parse(widget.end_lat);
+    end_lng = double.parse(widget.end_lng);
+
+    _pStartPoint = LatLng(start_latcod, start_lng);
+    _pEndPoint = LatLng(end_lat, end_lng);
+
+    print(_pStartPoint);
+    print(_pEndPoint);
+    getLocationUpdates().then((_) {
+      getPolylinePoints().then((coordinates) {
+        generatePolyLineFromPoints(coordinates);
+      });
+    });
   }
 
   @override
@@ -48,7 +65,7 @@ class _MapPageState extends State<MapPage> {
         onMapCreated: ((GoogleMapController controller) =>
             _mapController.complete(controller)),
         initialCameraPosition: CameraPosition(
-          target: _pGooglePlex,
+          target: _pStartPoint,
           zoom: 13,
         ),
         markers: {
@@ -60,11 +77,11 @@ class _MapPageState extends State<MapPage> {
           Marker(
               markerId: MarkerId("_sourceLocation"),
               icon: BitmapDescriptor.defaultMarker,
-              position: _pGooglePlex),
+              position: _pStartPoint),
           Marker(
               markerId: MarkerId("_destionationLocation"),
               icon: BitmapDescriptor.defaultMarker,
-              position: _pApplePark)
+              position: _pEndPoint)
         },
         polylines: Set<Polyline>.of(polylines.values),
       ),
@@ -119,8 +136,8 @@ class _MapPageState extends State<MapPage> {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       GOOGLE_MAPS_API_KEY,
-      PointLatLng(_pGooglePlex.latitude, _pGooglePlex.longitude),
-      PointLatLng(_pApplePark.latitude, _pApplePark.longitude),
+      PointLatLng(_pStartPoint.latitude, _pStartPoint.longitude),
+      PointLatLng(_pEndPoint.latitude, _pEndPoint.longitude),
       travelMode: TravelMode.driving,
     );
     if (result.points.isNotEmpty) {

@@ -236,7 +236,7 @@ List<Hike> hike =[];
                                                 size: 20,
                                               ),
                                               Text(
-                                                hike[index].amount ?? 'amount',
+                                                hike[index].trstAmount ?? 'amount',
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 20,
@@ -261,7 +261,7 @@ List<Hike> hike =[];
                                                 )
                                             ),
                                             TextSpan(
-                                                text: capitalize(hike[index].difficulty ?? 'Levels'),
+                                                text: capitalize(hike[index].category ?? 'Category'),
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 18,

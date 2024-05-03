@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hikemaniak_app/screens/admin/home.dart';
 import 'package:hikemaniak_app/screens/guide/home.dart';
+import 'package:hikemaniak_app/screens/tests/map_test.dart';
 import 'package:hikemaniak_app/screens/test.dart';
 import 'package:hikemaniak_app/widgets/bottom_nav_selector.dart';
 
@@ -143,18 +144,25 @@ class _AccountState extends State<Account> {
                       textAlign: TextAlign.start,
                       ),
                     ),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.account_circle_outlined),
-                            SizedBox(width: 10,),
-                            Text('Personal information')
-                          ],
-                        ),
-                        Icon(Icons.keyboard_arrow_right)
-                      ],
+                    InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder:
+                        (context)=>PlaceAutocomplete()
+                        ));
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.account_circle_outlined),
+                              SizedBox(width: 10,),
+                              Text('Personal information')
+                            ],
+                          ),
+                          Icon(Icons.keyboard_arrow_right)
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 20,),
                     Container(

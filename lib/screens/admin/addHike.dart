@@ -5,12 +5,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
+// import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:hikemaniak_app/constants.dart';
 import 'package:hikemaniak_app/theme.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:google_maps_webservice/places.dart';
+// import 'package:flutter_google_places/flutter_google_places.dart';
+// import 'package:google_maps_webservice/places.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 //
@@ -72,12 +73,133 @@ class _AddHikeState extends State<AddHike> {
   TextEditingController descController = TextEditingController();
   TextEditingController date_timeController = TextEditingController();
   TextEditingController locationController = TextEditingController();
-  TextEditingController start_pointController = TextEditingController(text: "Nairobi");
+  TextEditingController start_pointController = TextEditingController();
+  TextEditingController end_pointController = TextEditingController();
   TextEditingController ctzPriceController = TextEditingController();
   TextEditingController restPriceController = TextEditingController();
   TextEditingController trstPriceController = TextEditingController();
+  TextEditingController whatCarryController = TextEditingController();
+  TextEditingController addActivitiesController = TextEditingController();
   TextEditingController maxController = TextEditingController();
   TextEditingController minAgeController = TextEditingController();
+  List<Map<String, dynamic>> _suggestions = [];
+  List<Map<String, dynamic>> _EndSuggestions= [];
+  late double latStart;
+  late double lngStart;
+  late double latEnd;
+  late double lngEnd;
+
+  void _fetchSuggestions(String input) async {
+    final response = await http.get(
+      Uri.parse('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$GOOGLE_MAPS_API_KEY'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _suggestions = List<Map<String, dynamic>>.from(data['predictions'].map((prediction) => {
+          'description': prediction['description'],
+          'placeId': prediction['place_id'],
+        }));
+      });
+    } else {
+      throw Exception('Failed to fetch suggestions');
+    }
+  }
+
+  void _getPlaceDetails(String placeId) async {
+    final response = await http.get(
+      Uri.parse('https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$GOOGLE_MAPS_API_KEY'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final result = data['result'];
+      if (result != null) {
+        final geometry = result['geometry'];
+        if (geometry != null) {
+          final location = geometry['location'];
+          if (location != null) {
+            latStart = location['lat'];
+            lngStart = location['lng'];
+            print('Latitude: $latStart, Longitude: $lngStart');
+          } else {
+            print('Location data is null');
+          }
+        } else {
+          print('Geometry data is null');
+        }
+      } else {
+        print('Result data is null');
+      }
+    } else {
+      throw Exception('Failed to fetch place details');
+    }
+  }
+
+  void _selectSuggestion(int index) {
+    _getPlaceDetails(_suggestions[index]['placeId']);
+    start_pointController.text = _suggestions[index]['description'];
+    setState(() {
+      _suggestions.clear();
+    });
+  }
+
+
+  void _fetchEndSuggestions(String input) async {
+    final response = await http.get(
+      Uri.parse('https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$GOOGLE_MAPS_API_KEY'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _EndSuggestions = List<Map<String, dynamic>>.from(data['predictions'].map((prediction) => {
+          'description': prediction['description'],
+          'placeId': prediction['place_id'],
+        }));
+      });
+    } else {
+      throw Exception('Failed to fetch suggestions');
+    }
+  }
+
+  void _getEndPlaceDetails(String placeId) async {
+    final response = await http.get(
+      Uri.parse('https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$GOOGLE_MAPS_API_KEY'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final result = data['result'];
+      if (result != null) {
+        final geometry = result['geometry'];
+        if (geometry != null) {
+          final location = geometry['location'];
+          if (location != null) {
+            latEnd = location['lat'];
+            lngEnd = location['lng'];
+            print('Latitude: $latEnd, Longitude: $lngEnd');
+          } else {
+            print('Location data is null');
+          }
+        } else {
+          print('Geometry data is null');
+        }
+      } else {
+        print('Result data is null');
+      }
+    } else {
+      throw Exception('Failed to fetch place details');
+    }
+  }
+  void _selectEndSuggestion(int index) {
+    _getEndPlaceDetails(_EndSuggestions[index]['placeId']);
+    end_pointController.text = _EndSuggestions[index]['description'];
+    setState(() {
+      _EndSuggestions.clear();
+    });
+  }
 
 
   Future<void> _requestLocationPermission() async {
@@ -87,15 +209,17 @@ class _AddHikeState extends State<AddHike> {
     });
   }
 
-  String difficulty = 'Forest';
+  String category = 'Forest';
   String difficulty_level = '1 Easy';
   String title = '';
   String desc = '';
   String image = '';
   DateTime date_time = DateTime.now();
   String location = '';
-  String start_point = '';
+  late String start_point = '';
+  String end_point = '';
   String amount = '';
+
 
   bool addActivities = false;
 
@@ -111,15 +235,28 @@ class _AddHikeState extends State<AddHike> {
     var request = http.MultipartRequest('POST', url);
 
     // Add text fields to the request
-    request.fields['difficulty'] = difficulty;
+
+    request.fields['category'] = category;
     request.fields['title'] = title;
     request.fields['desc'] = desc;
     request.fields['date_time'] = date_time.toIso8601String();
     request.fields['location'] = location;
-    request.fields['start_point'] = start_point;
+    request.fields['start_point'] = start_pointController.text;
+    request.fields['end_point'] = end_pointController.text;
+
+    request.fields['start_lat'] = latStart.toString();
+    request.fields['start_lng'] = lngStart.toString();
+    request.fields['end_lat'] = latEnd.toString();
+    request.fields['end_lng'] = lngEnd.toString();
+
     request.fields['ctnAmount'] = ctzPriceController.text;
-    request.fields['rstAmount'] = restPriceController.text;
+    request.fields['resAmount'] = restPriceController.text;
     request.fields['trstAmount'] = trstPriceController.text;
+    request.fields['whatCarry'] = whatCarryController.text;
+    request.fields['addActivities'] = 'Add Later';
+    request.fields['difficulty'] = difficulty_level;
+    request.fields['maxSize'] = maxController.text;
+    request.fields['minAge'] = minAgeController.text;
     // Add other fields as needed
 
     // Add image file to the request
@@ -141,7 +278,9 @@ class _AddHikeState extends State<AddHike> {
 
     // Send the request
     try {
+
       var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
 
       // Process the response
       if (response.statusCode == 200) {
@@ -171,7 +310,7 @@ class _AddHikeState extends State<AddHike> {
         // Request failed
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Oops Failed to save hike $response.statusCode"),
+            content: Text("Oops Failed to save hike"+responseBody.toString()),
             backgroundColor: Colors.red,
           ),
         );
@@ -223,10 +362,10 @@ class _AddHikeState extends State<AddHike> {
                         padding: EdgeInsets.all(10),
                         child: DropdownButton<String>(
                           isExpanded: true,
-                          value: difficulty,
+                          value: category,
                           onChanged: (newValue) {
                             setState(() {
-                              difficulty = newValue!;
+                              category = newValue!;
                             });
                           },
                           items: ['Forest', 'Water', 'Rock', 'Alpine','Moorland','Camping']
@@ -364,31 +503,6 @@ class _AddHikeState extends State<AddHike> {
                       ),
                     ),
                     SizedBox(height: 16.0),
-                    // Container(
-                    //   height: 200.0,
-                    //   child: GoogleMap(
-                    //     onMapCreated: (GoogleMapController controller) {
-                    //       setState(() {
-                    //         mapController = controller;
-                    //       });
-                    //     },
-                    //     initialCameraPosition: CameraPosition(
-                    //       target: _selectedLocation,
-                    //       zoom: 13.0,
-                    //     ),
-                    //     markers: Set<Marker>.of([
-                    //       Marker(
-                    //         markerId: MarkerId('selectedLocation'),
-                    //         position: _selectedLocation,
-                    //       ),
-                    //     ]),
-                    //     onTap: (LatLng latLng) {
-                    //       setState(() {
-                    //         _selectedLocation = latLng;
-                    //       });
-                    //     },
-                    //   ),
-                    // ),
                     Card(
                       child: Container(
                         padding: EdgeInsets.all(10),
@@ -424,6 +538,9 @@ class _AddHikeState extends State<AddHike> {
                           children: [
                             TextField(
                               controller: start_pointController,
+                              onChanged: (input){
+                                _fetchSuggestions(input);
+                              },
                               decoration: InputDecoration(
                                 labelText: "Start Location",
                                 labelStyle: TextStyle(
@@ -437,27 +554,21 @@ class _AddHikeState extends State<AddHike> {
                                 focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: lightColorScheme.primary),
                                 ),
-                                suffixIcon: IconButton(
-                                  icon: Icon(Icons.search),
-                                  onPressed: () async {
-                                    Prediction? prediction = await PlacesAutocomplete.show(
-                                      context: context,
-                                      apiKey: PLACES_API,
-                                      mode: Mode.overlay, // Change to fullscreen if preferred
-                                    );
-
-                                    if (prediction != null) {
-                                      setState(() {
-                                        start_pointController.text = prediction.description!;
-                                      });
-                                    }
-                                  },
-                                ),
+                                suffixIcon: Icon(OctIcons.search),
                               ),
                             ),
                             // Display the selected location description (optional)
-                            Text(start_pointController.text),
-                          ],
+                            if (_suggestions.isNotEmpty)
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: _suggestions.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(_suggestions[index]['description']),
+                                    onTap: () => _selectSuggestion(index),
+                                  );
+                                },
+                              ),                          ],
                         ),
                       ),
                     ),
@@ -465,27 +576,42 @@ class _AddHikeState extends State<AddHike> {
                     Card(
                       child: Container(
                         padding: EdgeInsets.all(10),
-                        child: TextField(
-                          controller: start_pointController,
-                          onChanged: (value) {
-                            setState(() {
-                              start_point = value;
-                            });
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'End Point',
-                            labelStyle: TextStyle(
-                                color: Color(0xff545454),
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold
+                        child:Column(
+                          children: [
+                            TextField(
+                              controller: end_pointController,
+                              onChanged: (input){
+                                _fetchEndSuggestions(input);
+                              },
+                              decoration: InputDecoration(
+                                labelText: "End Location",
+                                labelStyle: TextStyle(
+                                    color: Color(0xff545454),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color:lightColorScheme.primary),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: lightColorScheme.primary),
+                                ),
+                                suffixIcon: Icon(OctIcons.search),
+                              ),
                             ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color:lightColorScheme.primary),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: lightColorScheme.primary),
-                            ),
-                          ),
+                            // Display the selected location description (optional)
+                            if (_EndSuggestions.isNotEmpty)
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: _EndSuggestions.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(_EndSuggestions[index]['description']),
+                                    onTap: () => _selectEndSuggestion(index),
+                                  );
+                                },
+                              ),
+                          ],
                         ),
                       ),
                     ),
@@ -593,6 +719,7 @@ class _AddHikeState extends State<AddHike> {
                               ),
                             ),
                             TextFormField(
+                              controller: whatCarryController,
                               decoration: InputDecoration(
                                 hintText: 'Equipment, Consumables, outfit etc.',
 
@@ -603,6 +730,11 @@ class _AddHikeState extends State<AddHike> {
                                   borderSide: BorderSide(color: lightColorScheme.primary),
                                 ),
                               ),
+                              onChanged: (value) {
+                                setState(() {
+                                  whatCarryController.text = value;
+                                });
+                              },
                             ),
                           ],
                         ),
@@ -742,11 +874,11 @@ class _AddHikeState extends State<AddHike> {
                       child: Container(
                         padding: EdgeInsets.all(10),
                         child: TextField(
-                          controller: titleController,
+                          controller: maxController,
                           keyboardType: TextInputType.number,
                           onChanged:(value){
                             setState(() {
-                              title = value;
+                              maxController.text = value;
                             });
                           },
                           decoration: InputDecoration(
@@ -771,11 +903,11 @@ class _AddHikeState extends State<AddHike> {
                       child: Container(
                         padding: EdgeInsets.all(10),
                         child: TextField(
-                          controller: descController,
+                          controller: minAgeController,
                           keyboardType: TextInputType.number,
                           onChanged: (value) {
                             setState(() {
-                              desc = value;
+                              minAgeController.text = value;
                             });
                           },
                           decoration: InputDecoration(
