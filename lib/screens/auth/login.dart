@@ -67,7 +67,7 @@ class _SignInScreenState extends State<SignInScreen> {
       print('Error: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error occurred while logging in.'),
+          content: Text('No user found, Please sign up.'),
         ),
       );
     }

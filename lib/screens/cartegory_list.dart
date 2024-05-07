@@ -11,13 +11,16 @@ import '../theme.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-class ListScreen extends StatefulWidget {
+class CategoryLists extends StatefulWidget {
+  late String category;
+  CategoryLists({required this.category});
+
   @override
-  _ListScreenState createState() => _ListScreenState();
+  _CategoryListsState createState() => _CategoryListsState();
 }
 
-class _ListScreenState extends State<ListScreen> {
-List<Hike> hike =[];
+class _CategoryListsState extends State<CategoryLists> {
+  List<Hike> hike =[];
 
   @override
   void initState() {
@@ -26,7 +29,7 @@ List<Hike> hike =[];
   }
 
   Future<void> fetchHike() async {
-    final response = await http.get(Uri.parse('$BASE_URL/hike/index'));
+    final response = await http.get(Uri.parse('$BASE_URL/hike/category/'+widget.category));
     debugPrint('worked');
 
     if (response.statusCode == 200) {
@@ -76,7 +79,7 @@ List<Hike> hike =[];
                               Navigator.pop(context);
                             }),
                         Text(
-                          'All Hikes',
+                          widget.category,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 36,
@@ -170,7 +173,7 @@ List<Hike> hike =[];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder:
-                          (context)=> HikeDetails(hikeId:hike[index].id.toString())
+                              (context)=> HikeDetails(hikeId:hike[index].id.toString())
                           ));
                         },
                         child: Card(
@@ -200,9 +203,9 @@ List<Hike> hike =[];
                                       Text(capitalize(hike[index].title ?? 'Title'),
 
                                         style: TextStyle(
-                                          color: lightColorScheme.primary,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20
+                                            color: lightColorScheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20
                                         ),
                                       ),
 
@@ -254,18 +257,18 @@ List<Hike> hike =[];
                                                 child: Container(
 
                                                   child: Icon(Icons.category_outlined,
-                                                  color: lightColorScheme.primary,
+                                                    color: lightColorScheme.primary,
                                                     size: 30,
                                                   ),
                                                   padding: EdgeInsets.only(right: 5),
                                                 )
                                             ),
                                             TextSpan(
-                                                text: capitalize(hike[index].category ?? 'Category'),
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 18,
-                                                ),
+                                              text: capitalize(hike[index].category ?? 'Category'),
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                              ),
                                             )
                                           ]
                                       )),

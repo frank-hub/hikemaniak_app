@@ -11,6 +11,8 @@ import 'package:hikemaniak_app/widgets/upcoming_selector.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../model/hike.dart';
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -19,14 +21,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String userName = '';
+  List<Hike> hike = [];
 
   @override
   void initState() {
     super.initState();
-    fetchUserData();
+    fetchData();
   }
 
-  Future<void> fetchUserData() async {
+  Future<void> fetchData() async {
     // Fetch user details from your API using the authentication token
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
@@ -42,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         userName = userData['name'];
       });
+
     } else {
       userName = 'Please Login';
     }

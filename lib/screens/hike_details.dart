@@ -6,6 +6,7 @@ import 'package:hikemaniak_app/screens/book_hike.dart';
 import 'package:hikemaniak_app/screens/map_trail.dart';
 import 'package:hikemaniak_app/theme.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import '../model/hike.dart';
 
 class HikeDetails extends StatefulWidget {
@@ -18,7 +19,7 @@ class HikeDetails extends StatefulWidget {
 
 class _HikeDetailsState extends State<HikeDetails> {
   late Hike hike = Hike();
-
+  String formattedDate = '';
   @override
   void initState() {
     super.initState();
@@ -40,6 +41,8 @@ class _HikeDetailsState extends State<HikeDetails> {
         // Pass the extracted event data to Event.fromJson
         hike = Hike.fromJson(hikeData);
       });
+      DateTime dateTime = DateTime.parse(hike.date_time.toString());
+      formattedDate = DateFormat('dd-MM-yyyy').format(dateTime);
     } else {
       throw Exception('Failed to load event details');
     }
@@ -100,14 +103,14 @@ class _HikeDetailsState extends State<HikeDetails> {
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           ),
                           TextSpan(
                             text:hike.difficulty ?? '',
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           )
                         ]
@@ -130,15 +133,15 @@ class _HikeDetailsState extends State<HikeDetails> {
                             text: "Group: ",
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold
                             ),
                           ),
-                          const TextSpan(
-                            text: "5",
+                          TextSpan(
+                            text: hike.maxSize ?? '',
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 20,
+                                fontSize: 18,
                             ),
                           )
                         ]
@@ -166,7 +169,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                             text: capitalize('Location: '),
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold
                             ),
                           ),
@@ -174,32 +177,32 @@ class _HikeDetailsState extends State<HikeDetails> {
                             text: capitalize(hike.location ?? ''),
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           )
                         ]
                     ),
                   ),
-                  const SizedBox(width: 90,),
+                  const SizedBox(width: 10,),
                   RichText(
                     text: TextSpan(
                         children: [
                           WidgetSpan(
-                              child: Icon(Icons.run_circle_outlined,
+                              child: Icon(Icons.calendar_month,
                                 color: lightColorScheme.primary,
                                 size: 25,
                               )
                           ),
                           const TextSpan(
-                            text: "Difficulty: ",
+                            text: "Min Age: ",
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
                             ),
                           ),
-                          const TextSpan(
-                            text: "4",
+                          TextSpan(
+                            text: hike.minAge ?? '',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -234,8 +237,8 @@ class _HikeDetailsState extends State<HikeDetails> {
                               fontWeight: FontWeight.bold
                             ),
                           ),
-                          const TextSpan(
-                            text: '6',
+                          TextSpan(
+                            text: formattedDate ?? '',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -249,21 +252,21 @@ class _HikeDetailsState extends State<HikeDetails> {
                     text: TextSpan(
                         children: [
                           WidgetSpan(
-                              child: Icon(Icons.calendar_month,
+                              child: Icon(Icons.run_circle_outlined,
                                 color: lightColorScheme.primary,
                                 size: 25,
                               )
                           ),
                           const TextSpan(
-                            text: "Min Age: ",
+                            text: "Difficulty: ",
                             style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
                             ),
                           ),
-                          const TextSpan(
-                            text: "14",
+                          TextSpan(
+                            text: hike.difficulty ?? '',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -298,42 +301,8 @@ class _HikeDetailsState extends State<HikeDetails> {
               Container(
                 height: 200,
 
-                child: ListView.builder(
-                  itemExtent: 28,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      child: RichText(
-                        textAlign: TextAlign.start,
-                        text: const TextSpan(
-                          children: [
-                            WidgetSpan(
-                              child: Text(
-                                textAlign: TextAlign.center,
-                                '.',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                )
-                              )
-                            ),
-                            WidgetSpan(
-                                child: Text(
-                                    textAlign: TextAlign.center,
-                                    'Have rain Coat or umbrellas',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 20
-                                    )
-                                )
-                            ),
-
-                          ]
-                        ),
-                      ),
-                    );
-                  },
+                child:Text(
+                  hike.whatCarry ?? ''
                 ),
               ),
               Row(

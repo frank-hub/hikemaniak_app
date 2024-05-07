@@ -68,7 +68,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                 )
               ],
             ),
-            title: const Text('Guide Portal',
+            title: const Text('Admin Portal',
             style: TextStyle(
               fontSize: 14
             ),
@@ -104,8 +104,10 @@ class _HomeAdminState extends State<HomeAdmin> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 color: Colors.grey.withOpacity(0.3),
                 child: ListView.builder(
-                  itemCount: 10,
+                  itemCount: hike.length,
                   itemBuilder: (context, index) {
+                    // int bookingId = hike[index].booking.id;
+
                     return Container(
                       height: 150,
                       width: double.infinity,
@@ -122,7 +124,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text("Ref# 2001",
+                                      Text(hike[index].car_pooling ?? '',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             fontSize: 12,

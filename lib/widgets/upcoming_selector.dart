@@ -1,7 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hikemaniak_app/screens/hike_details.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import '../constants.dart';
+import '../model/hike.dart';
 import '../theme.dart';
+
 class UpcomingSelector extends StatefulWidget {
   const UpcomingSelector({super.key});
 
@@ -10,6 +15,29 @@ class UpcomingSelector extends StatefulWidget {
 }
 
 class _UpcomingSelectorState extends State<UpcomingSelector> {
+  List<Hike> hike = [];
+  String formattedDate = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHikes();
+  }
+
+  Future<void> fetchHikes() async {
+    final res = await http.get(Uri.parse('$BASE_URL/hike/index'));
+    if (res.statusCode == 200) {
+      // lets decode the res body to map
+      Map<String, dynamic> resData = jsonDecode(res.body);
+
+      // extract the list from map
+      List<dynamic> hikes = resData['data'];
+      setState(() {
+        hike = hikes.map((data) => Hike.fromJson(data)).toList();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,32 +64,43 @@ class _UpcomingSelectorState extends State<UpcomingSelector> {
             ],
           ),
         ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              GestureDetector(
+        Container(
+          height: 350,
+          width: 700,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: hike.length,
+            itemBuilder: (context, index) {
+              // Format the date
+              DateTime dateTime = DateTime.parse(hike[index].date_time ?? '');
+              formattedDate = DateFormat('MMMM, dd, yyyy').format(dateTime);
+
+              return GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder:
-                  (context)=> HikeDetails(hikeId: '5',)
-                  ));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HikeDetails(
+                        hikeId: hike[index].id.toString(),
+                      ),
+                    ),
+                  );
                 },
                 child: Card(
                   child: Container(
                     height: 335,
                     width: 250,
                     padding: const EdgeInsets.all(10),
-                    child:Column(
+                    child: Column(
                       children: [
                         Container(
                           height: 200,
                           decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/test.jpg'),
-                                fit: BoxFit.fill,
-                              ),
-                              borderRadius: BorderRadius.circular(10)
+                            image: const DecorationImage(
+                              image: AssetImage('assets/images/test.jpg'),
+                              fit: BoxFit.fill,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         Expanded(
@@ -70,34 +109,39 @@ class _UpcomingSelectorState extends State<UpcomingSelector> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 10,),
-                              Text('4 Days Mt Kenya Naromoru -Sirimon',
+                              Text(
+                                hike[index].title ?? '',
                                 style: TextStyle(
-                                    color: lightColorScheme.primary,
-                                    fontWeight: FontWeight.bold
+                                  color: lightColorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20
                                 ),
                               ),
-                              const Text('August 15, 2024',
+                              Text(
+                                formattedDate, // Display formatted date here
                                 style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-
                               Stack(
                                 children: [
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Icon(Icons.pin_drop,
-                                        color: lightColorScheme.primary,),
+                                      Icon(
+                                        Icons.pin_drop,
+                                        color: lightColorScheme.primary,
+                                      ),
                                       Expanded(
-                                        child: Text('Naromoru',
+                                        child: Text(
+                                          hike[index].location ?? '',
                                           style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black
+                                            fontSize: 12,
+                                            color: Colors.black,
                                           ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                   Row(
@@ -106,278 +150,28 @@ class _UpcomingSelectorState extends State<UpcomingSelector> {
                                       Text("From"),
                                       SizedBox(width: 5,),
                                       Text(
-                                        '44500',
+                                        hike[index].ctnAmount ?? '',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: lightColorScheme.primary
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                          color: lightColorScheme.primary,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ],
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-
-                },
-                child: Card(
-                  child: Container(
-                    height: 335,
-                    width: 250,
-                    padding: const EdgeInsets.all(10),
-                    child:Column(
-                      children: [
-                        Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/test2.jpg'),
-                                fit: BoxFit.fill,
                               ),
-                              borderRadius: BorderRadius.circular(10)
+                            ],
                           ),
                         ),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 10,),
-                              Text('Mount Kilimanjaro Marangu Climb',
-                                style: TextStyle(
-                                    color: lightColorScheme.primary,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              const Text('March 28, 2024',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-
-                              Stack(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Icon(Icons.pin_drop,
-                                        color: lightColorScheme.primary,),
-                                      Expanded(
-                                        child: Text('Moshi, Tanzania',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text("From"),
-                                      SizedBox(width: 5,),
-                                      Text(
-                                        '94500',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: lightColorScheme.primary
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        )
                       ],
                     ),
                   ),
                 ),
-              ),
-              GestureDetector(
-                onTap: () {
-
-                },
-                child: Card(
-                  child: Container(
-                    height: 335,
-                    width: 250,
-                    padding: const EdgeInsets.all(10),
-                    child:Column(
-                      children: [
-                        Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/test.jpg'),
-                                fit: BoxFit.fill,
-                              ),
-                              borderRadius: BorderRadius.circular(10)
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 10,),
-                              Text('4 Days Mt Kenya Naromoru -Sirimon',
-                                style: TextStyle(
-                                    color: lightColorScheme.primary,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              const Text('August 15, 2024',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-
-                              Stack(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Icon(Icons.pin_drop,
-                                        color: lightColorScheme.primary,),
-                                      Expanded(
-                                        child: Text('Naromoru',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text("From"),
-                                      SizedBox(width: 5,),
-                                      Text(
-                                        '44500',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: lightColorScheme.primary
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-
-                },
-                child: Card(
-                  child: Container(
-                    height: 335,
-                    width: 250,
-                    padding: const EdgeInsets.all(10),
-                    child:Column(
-                      children: [
-                        Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/test.jpg'),
-                                fit: BoxFit.fill,
-                              ),
-                              borderRadius: BorderRadius.circular(10)
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 10,),
-                              Text('4 Days Mt Kenya Naromoru -Sirimon',
-                                style: TextStyle(
-                                    color: lightColorScheme.primary,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              const Text('August 15, 2024',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold
-                                ),
-                              ),
-
-                              Stack(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Icon(Icons.pin_drop,
-                                        color: lightColorScheme.primary,),
-                                      Expanded(
-                                        child: Text('Naromoru',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text("From"),
-                                      SizedBox(width: 5,),
-                                      Text(
-                                        '44500',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: lightColorScheme.primary
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-            ],
+              );
+            },
           ),
-        )
+        ),
       ],
     );
   }
