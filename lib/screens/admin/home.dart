@@ -20,8 +20,7 @@ class HomeAdmin extends StatefulWidget {
 
 class _HomeAdminState extends State<HomeAdmin> {
 
-  List<HikeBook> hike =[];
-
+  List<Map<String, dynamic>> hikeData = [];
   @override
   void initState() {
     super.initState();
@@ -34,14 +33,10 @@ class _HomeAdminState extends State<HomeAdmin> {
 
     if (response.statusCode == 200) {
 
-      // Decode the response body into a map
-      Map<String, dynamic> responseData = json.decode(response.body);
-
-      // Extract the list of events from the map using the appropriate key
-      List<dynamic> hikeData = responseData['data'];
-
       setState(() {
-        hike = hikeData.map((data) => HikeBook.fromJson(data)).toList();
+        hikeData = List<Map<String, dynamic>>.from(json.decode(response.body)['data']);
+
+        // print(responseData['data']);
       });
     } else {
       throw Exception('Failed to load events');
@@ -104,9 +99,11 @@ class _HomeAdminState extends State<HomeAdmin> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 color: Colors.grey.withOpacity(0.3),
                 child: ListView.builder(
-                  itemCount: hike.length,
+                  itemCount: hikeData.length,
                   itemBuilder: (context, index) {
-                    // int bookingId = hike[index].booking.id;
+                    final booking = hikeData[index]['booking'];
+                    final hike = hikeData[index]['hike'];
+                    final user = hikeData[index]['user'];
 
                     return Container(
                       height: 150,
@@ -124,14 +121,14 @@ class _HomeAdminState extends State<HomeAdmin> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(hike[index].car_pooling ?? '',
+                                      Text("Ref# ${booking['id']}" ?? '',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             fontSize: 12,
                                             letterSpacing: 0.2
                                         ),
                                       ),
-                                      const Text("Mt Kenya Day Dash – Sirimon",
+                                      Text(hike['title'] ?? '',
                                       textAlign: TextAlign.left,
                                         style: TextStyle(
                                           fontSize: 12,
@@ -139,7 +136,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                                         ),
                                       ),
                                       const SizedBox(height: 1,),
-                                      const Text("Cyrus Doe",
+                                      Text(user['name'] ?? '',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             fontSize: 12,
@@ -147,7 +144,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                                         ),
                                       ),
                                       const SizedBox(height: 1,),
-                                      const Text("17-Mar-2024 19:00",
+                                      Text(booking['date_time'] ?? '',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             fontSize: 12,
