@@ -21,28 +21,94 @@ class HomeAdmin extends StatefulWidget {
 class _HomeAdminState extends State<HomeAdmin> {
 
   List<Map<String, dynamic>> hikeData = [];
+  List<Map<String, dynamic>> confirmedHike = [];
+
   @override
   void initState() {
     super.initState();
     fetchHike();
+    fetchBooked();
   }
 
+  Future<void> fetchBooked() async {
+    final response = await http.get(Uri.parse('$BASE_URL/hike_booking/confirmedBooking'));
+      if(response.statusCode == 200){
+        setState(() {
+          confirmedHike = List<Map<String,dynamic>>.from(json.decode(response.body)['data']);
+        });
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Something went wrong'),
+            backgroundColor: Colors.red,
+          )
+        );
+      }
+
+    try{
+
+    }catch(e){
+
+    }
+  } 
+  
+  
+  
+  
+  
   Future<void> fetchHike() async {
     final response = await http.get(Uri.parse('$BASE_URL/hike_booking/index'));
     debugPrint('worked');
 
-    if (response.statusCode == 200) {
+    try{
+      if (response.statusCode == 200) {
 
-      setState(() {
-        hikeData = List<Map<String, dynamic>>.from(json.decode(response.body)['data']);
+        setState(() {
+          hikeData = List<Map<String, dynamic>>.from(json.decode(response.body)['data']);
 
-        // print(responseData['data']);
-      });
-    } else {
-      throw Exception('Failed to load events');
+        });
+      } else {
+        throw Exception('Failed to load events');
+      }
+    } catch(e){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Something Went Wrong$e'))
+      );
     }
   }
+  Future<void> _confirmBooking(var id,int index,int btnStatus) async {
+    final response = await http.get(Uri.parse('$BASE_URL/hike_booking/status/${id}'));
+    
+    try{
+      if(response.statusCode == 200)
+        {
+          Map<String,dynamic> message = json.decode(response.body);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message['message'] as String)
+          ));
 
+          setState(() {
+            // Remove the confirmed booking from the list
+            if(btnStatus == 1){
+              confirmedHike.removeAt(index);
+            }else{
+              hikeData.removeAt(index);
+            }
+          });
+
+        }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.statusCode.toString())
+            ));
+      }
+      
+      
+    }catch(e){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error Please Try Again$e'))
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +140,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                 child: GestureDetector(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder:
-                        (context)=> Notifications()
+                        (context)=> const Notifications()
                     ));
                   }, // Call _createEvent method on tap
                   child: Icon(Icons.notifications_active,
@@ -88,10 +154,10 @@ class _HomeAdminState extends State<HomeAdmin> {
           floatingActionButton: FloatingActionButton(
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder:
-              (context)=> AddHike()
+              (context)=> const AddHike()
               ));
             },
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
           ),
           body: TabBarView(
             children: [
@@ -123,14 +189,14 @@ class _HomeAdminState extends State<HomeAdmin> {
                                     children: [
                                       Text("Ref# ${booking['id']}" ?? '',
                                         textAlign: TextAlign.left,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 12,
                                             letterSpacing: 0.2
                                         ),
                                       ),
                                       Text(hike['title'] ?? '',
                                       textAlign: TextAlign.left,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 12,
                                           letterSpacing: 0.2
                                         ),
@@ -138,7 +204,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                                       const SizedBox(height: 1,),
                                       Text(user['name'] ?? '',
                                         textAlign: TextAlign.left,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 12,
                                             letterSpacing: 0.2
                                         ),
@@ -146,12 +212,14 @@ class _HomeAdminState extends State<HomeAdmin> {
                                       const SizedBox(height: 1,),
                                       Text(booking['date_time'] ?? '',
                                         textAlign: TextAlign.left,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 12,
                                             letterSpacing: 0.2
                                         ),
                                       ),
-                                      TextButton(onPressed: (){},
+                                      TextButton(onPressed: (){
+                                        _confirmBooking(booking['id'],index,0);
+                                      },
                                           child: const Text('Confirm'))
                                     ],
                                   ),
@@ -169,8 +237,12 @@ class _HomeAdminState extends State<HomeAdmin> {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   color: lightColorScheme.primary.withOpacity(0.2),
                   child: ListView.builder(
-                    itemCount: 10,
+                    itemCount: confirmedHike.length,
                     itemBuilder: (context, index) {
+                      final booking = confirmedHike[index]['booking'];
+                      final hike = confirmedHike[index]['hike'];
+                      final user = confirmedHike[index]['user'];
+
                       return Container(
                         height: 150,
                         width: double.infinity,
@@ -187,52 +259,64 @@ class _HomeAdminState extends State<HomeAdmin> {
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Text("Ref# 2001",
+                                        Text("Ref# ${booking['id']}" ?? '',
                                           textAlign: TextAlign.left,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 12,
                                               letterSpacing: 0.2
                                           ),
                                         ),
-                                        const Text("Mt Kenya Day Dash – Sirimon",
+                                        Text(hike['title'] ?? '',
                                           textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              letterSpacing: 0.2
-                                          ),
-                                        ),
-                                        const SizedBox(height: 1,),
-                                        const Text("Cyrus Doe",
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 12,
                                               letterSpacing: 0.2
                                           ),
                                         ),
                                         const SizedBox(height: 1,),
-                                        const Text("17-Mar-2024 19:00",
+                                        Text(user['name'] ?? '',
                                           textAlign: TextAlign.left,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 12,
                                               letterSpacing: 0.2
                                           ),
                                         ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                          decoration: BoxDecoration(
-                                            color: Colors.green,
-                                            borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
-                                          ),
-                                          child: const Text(
-                                            "Completed",
-                                            style: TextStyle(
-                                              color: Colors.white,
+                                        const SizedBox(height: 1,),
+                                        Text(booking['date_time'] ?? '',
+                                          textAlign: TextAlign.left,
+                                          style: const TextStyle(
                                               fontSize: 12,
-                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 0.2
+                                          ),
+                                        ),
+                                        InkWell(
+                                          onTap: (){
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                backgroundColor: Colors.red,
+                                                content: Text('Are you sure ? , If Yes Double Tap'),
+                                              )
+                                            );
+                                          },
+                                          onDoubleTap: (){
+                                            _confirmBooking(booking['id'],index,1);
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+                                            ),
+                                            child: const Text(
+                                              "Cancel",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         )
-
                                       ],
                                     ),
                                   ),
@@ -244,16 +328,17 @@ class _HomeAdminState extends State<HomeAdmin> {
                       );
                     },
                   )
+
               ),
               SingleChildScrollView(
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(
-                        child: const CircleAvatar(
+                      const Center(
+                        child: CircleAvatar(
                           backgroundImage:AssetImage('assets/user-profile.png',
                           ),
                           radius: 70,
@@ -279,8 +364,8 @@ class _HomeAdminState extends State<HomeAdmin> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            child: const Text("Some Info about the admin or service provider Hello.Some Info about the admin provider.s",
+                          const Expanded(
+                            child: Text("Some Info about the admin or service provider Hello.Some Info about the admin provider.s",
                               style: TextStyle(fontWeight: FontWeight.w500),),
                           ),
                           Icon(Clarity.note_edit_line,
@@ -301,12 +386,12 @@ class _HomeAdminState extends State<HomeAdmin> {
                           itemCount: 5,
                           itemBuilder: (context, index) {
                             return Container(
-                              margin: EdgeInsets.all(8.0),
+                              margin: const EdgeInsets.all(8.0),
                               width: 120.0,
                               height: 120.0,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
-                                image: DecorationImage(
+                                image: const DecorationImage(
                                   image: AssetImage('assets/images/hike.jpeg'),
                                   fit: BoxFit.cover,
                                 ),
@@ -322,7 +407,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Row(
+                          const Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Icon(Bootstrap.dot),
@@ -334,7 +419,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                               )
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Icon(Bootstrap.dot),
@@ -346,7 +431,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                               )
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Icon(Bootstrap.dot),
@@ -358,7 +443,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                               )
                             ],
                           ),
-                          Row(
+                          const Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Icon(Bootstrap.dot),

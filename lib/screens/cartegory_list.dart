@@ -11,6 +11,8 @@ import '../theme.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import 'hike_map_points.dart';
+
 class CategoryLists extends StatefulWidget {
   late String category;
   CategoryLists({required this.category});
@@ -120,18 +122,18 @@ class _CategoryListsState extends State<CategoryLists> {
                 ),
               ),
             ),
-            Stack(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MapScreen(),
-                      ),
-                    );
-                  },
-                  child: Container(
+            InkWell(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HikeMapPoints(),
+                  ),
+                );
+              },
+              child: Stack(
+                children: <Widget>[
+                  Container(
                     //color: Colors.lightBlue,
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
@@ -148,20 +150,20 @@ class _CategoryListsState extends State<CategoryLists> {
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 24,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 32),
-                    child: Text('Check activities\nnearby',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                        )),
+                  Positioned(
+                    top: 24,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 32),
+                      child: Text('Check activities\nnearby',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          )),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Expanded(
               child: Container(

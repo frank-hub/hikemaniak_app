@@ -47,19 +47,22 @@ class _MapPageState extends State<MapPage> {
 
     print(_pStartPoint);
     print(_pEndPoint);
-    getLocationUpdates().then((_) {
-      getPolylinePoints().then((coordinates) {
-        generatePolyLineFromPoints(coordinates);
-      });
-    });
+    // getLocationUpdates().then((_) {
+    //   getPolylinePoints().then((coordinates) {
+    //     generatePolyLineFromPoints(coordinates);
+    //   });
+    // });
+    getPolylinePoints().then((coordinates) {
+          generatePolyLineFromPoints(coordinates);
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _currentP == null
+      body: _pStartPoint == null
           ? const Center(
-        child: Text("Loading..."),
+        child: Text("Loading - If You Have Not Enabled Location Please do..."),
       )
           : GoogleMap(
         onMapCreated: ((GoogleMapController controller) =>
@@ -69,18 +72,24 @@ class _MapPageState extends State<MapPage> {
           zoom: 13,
         ),
         markers: {
+          // Marker(
+          //   markerId: MarkerId("_currentLocation"),
+          //   icon: BitmapDescriptor.defaultMarker,
+          //   position: _currentP!,
+          // ),
           Marker(
-            markerId: MarkerId("_currentLocation"),
-            icon: BitmapDescriptor.defaultMarker,
-            position: _currentP!,
-          ),
-          Marker(
-              markerId: MarkerId("_sourceLocation"),
+              markerId: MarkerId("Start Point"),
               icon: BitmapDescriptor.defaultMarker,
+              infoWindow: InfoWindow(
+                title: 'We Start Here'
+              ),
               position: _pStartPoint),
           Marker(
-              markerId: MarkerId("_destionationLocation"),
+              markerId: MarkerId("End Point"),
               icon: BitmapDescriptor.defaultMarker,
+              infoWindow: InfoWindow(
+                title: 'We End Here'
+              ),
               position: _pEndPoint)
         },
         polylines: Set<Polyline>.of(polylines.values),
@@ -99,37 +108,37 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  Future<void> getLocationUpdates() async {
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-
-    _serviceEnabled = await _locationController.serviceEnabled();
-    if (_serviceEnabled) {
-      _serviceEnabled = await _locationController.requestService();
-    } else {
-      return;
-    }
-
-    _permissionGranted = await _locationController.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await _locationController.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    _locationController.onLocationChanged
-        .listen((LocationData currentLocation) {
-      if (currentLocation.latitude != null &&
-          currentLocation.longitude != null) {
-        setState(() {
-          _currentP =
-              LatLng(currentLocation.latitude!, currentLocation.longitude!);
-          _cameraToPosition(_currentP!);
-        });
-      }
-    });
-  }
+  // Future<void> getLocationUpdates() async {
+  //   bool _serviceEnabled;
+  //   PermissionStatus _permissionGranted;
+  //
+  //   _serviceEnabled = await _locationController.serviceEnabled();
+  //   if (_serviceEnabled) {
+  //     _serviceEnabled = await _locationController.requestService();
+  //   } else {
+  //     return;
+  //   }
+  //
+  //   _permissionGranted = await _locationController.hasPermission();
+  //   if (_permissionGranted == PermissionStatus.denied) {
+  //     _permissionGranted = await _locationController.requestPermission();
+  //     if (_permissionGranted != PermissionStatus.granted) {
+  //       return;
+  //     }
+  //   }
+  //
+  //   _locationController.onLocationChanged
+  //       .listen((LocationData currentLocation) {
+  //     if (currentLocation.latitude != null &&
+  //         currentLocation.longitude != null) {
+  //       setState(() {
+  //         _currentP =
+  //             LatLng(currentLocation.latitude!, currentLocation.longitude!);
+  //         _cameraToPosition(_currentP!);
+  //       });
+  //     }
+  //   });
+  // }
 
   Future<List<LatLng>> getPolylinePoints() async {
     List<LatLng> polylineCoordinates = [];
