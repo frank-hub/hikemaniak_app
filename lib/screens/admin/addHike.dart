@@ -15,7 +15,6 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 //
-import '../../model/hike.dart';
 
 class AddHike extends StatefulWidget {
   const AddHike({Key? key}) : super(key: key);
@@ -220,11 +219,16 @@ class _AddHikeState extends State<AddHike> {
   String end_point = '';
   String amount = '';
 
-
-  bool addActivities = false;
+  bool Village_Experience = false;
+  bool Culture_Show = false;
+  bool Bird_Watching = false;
+  bool Swimming = false;
+  bool Local_Cuisines = false;
+  bool Other =false;
 
 
   Future<void> _createEvent() async {
+
     setState(() {
       _isLoading = true;
     });
@@ -758,11 +762,11 @@ class _AddHikeState extends State<AddHike> {
                                   unselectedWidgetColor: Colors.orange, // Color of the unchecked checkbox
                                 ),
                                 child: Checkbox(
-                                  value: false,
+                                  value: Village_Experience,
                                   onChanged: (bool? value) {
                                     setState(() {
-                                      addActivities = value ?? false;
-                                      print('Checkbox value: $addActivities');
+                                      Village_Experience = value!;
+                                      print('Checkbox value: $Village_Experience');
                                     });
                                   },
                                   checkColor: Colors.orange,
@@ -777,8 +781,12 @@ class _AddHikeState extends State<AddHike> {
                           child: Row(
                             children: [
                               Checkbox(
-                                value: false,
-                                onChanged: (bool? value) {},
+                                value: Culture_Show,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    Culture_Show = value!;
+                                  });
+                                },
                                 checkColor: Colors.orange, // Color of the check icon
                                 activeColor: Colors.transparent, // Color of the check box when checked
                               ),
@@ -794,8 +802,12 @@ class _AddHikeState extends State<AddHike> {
                           child: Row(
                             children: [
                               Checkbox(
-                                value: false,
-                                onChanged: (value) {},
+                                value: Bird_Watching,
+                                onChanged: (value) {
+                                  setState(() {
+                                    Bird_Watching = value!;
+                                  });
+                                },
                               ),
                               Text('Bird Watching'),
                             ],
@@ -805,8 +817,12 @@ class _AddHikeState extends State<AddHike> {
                           child: Row(
                             children: [
                               Checkbox(
-                                value: false,
-                                onChanged: (value) {},
+                                value: Swimming,
+                                onChanged: (value) {
+                                  setState(() {
+                                    Swimming = value!;
+                                  });
+                                },
                               ),
                               Text('Swimming'),
                             ],
@@ -820,8 +836,12 @@ class _AddHikeState extends State<AddHike> {
                           child: Row(
                             children: [
                               Checkbox(
-                                value: false,
-                                onChanged: (value) {},
+                                value: Local_Cuisines,
+                                onChanged: (value) {
+                                  setState(() {
+                                    Local_Cuisines = value!;
+                                  });
+                                },
                               ),
                               Text('Local Cuisines'),
                             ],
@@ -831,8 +851,12 @@ class _AddHikeState extends State<AddHike> {
                           child: Row(
                             children: [
                               Checkbox(
-                                value: false,
-                                onChanged: (value) {},
+                                value: Other,
+                                onChanged: (value) {
+                                  setState(() {
+                                    Other = value!;
+                                  });
+                                },
                               ),
                               Text('Other'),
                             ],

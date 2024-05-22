@@ -96,9 +96,9 @@ class _UpcomingSelectorState extends State<UpcomingSelector> {
                         Container(
                           height: 200,
                           decoration: BoxDecoration(
-                            image: const DecorationImage(
-                              image: AssetImage('assets/images/test.jpg'),
-                              fit: BoxFit.fill,
+                            image:  DecorationImage(
+                              image: NetworkImage(hike[index].image ??'assets/images/test.jpg'),
+                              fit: BoxFit.cover,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),

@@ -187,7 +187,7 @@ List<Hike> hike =[];
                                       image: DecorationImage(
                                         image: NetworkImage(
                                             hike[index].image ?? 'assets/images/test.jpg'),
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.cover,
                                       ),
                                       borderRadius: BorderRadius.circular(10)
                                   ),
@@ -203,7 +203,7 @@ List<Hike> hike =[];
                                         style: TextStyle(
                                           color: lightColorScheme.primary,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 20
+                                          fontSize: 18
                                         ),
                                       ),
 
@@ -232,12 +232,10 @@ List<Hike> hike =[];
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
-                                              Icon(Icons.attach_money,
-                                                color: lightColorScheme.primary,
-                                                size: 20,
-                                              ),
+                                              Text("From"),
+                                              SizedBox(width: 5,),
                                               Text(
-                                                hike[index].trstAmount ?? 'amount',
+                                                hike[index].ctnAmount ?? 'amount',
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 20,

@@ -34,7 +34,7 @@ class _HomeAdminState extends State<HomeAdmin> {
     final response = await http.get(Uri.parse('$BASE_URL/hike_booking/confirmedBooking'));
       if(response.statusCode == 200){
         setState(() {
-          confirmedHike = List<Map<String,dynamic>>.from(json.decode(response.body)['data']);
+          confirmedHike = List<Map<String,dynamic>>.from(json.decode(response.body)['data']) ?? [];
         });
       }else{
         ScaffoldMessenger.of(context).showSnackBar(
@@ -119,7 +119,7 @@ class _HomeAdminState extends State<HomeAdmin> {
             bottom: const TabBar(
               tabs: [
                 Tab(
-                  child: Text('Booked'),
+                  child: Text('Bookings'),
                 ),
                 Tab(
                   child: Text('Status'),
@@ -179,7 +179,10 @@ class _HomeAdminState extends State<HomeAdmin> {
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             children: [
-                              const Image(image: AssetImage('assets/images/details.jpg')),
+                              Image(
+                                  image: NetworkImage(hike['image'] ?? 'assets/images/details.jpg'),
+                                fit: BoxFit.cover,
+                              ),
                               Expanded(
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10),

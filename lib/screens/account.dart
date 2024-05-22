@@ -6,6 +6,7 @@ import 'package:hikemaniak_app/constants.dart';
 import 'package:hikemaniak_app/screens/admin/home.dart';
 import 'package:hikemaniak_app/screens/auth/login.dart';
 import 'package:hikemaniak_app/screens/guide/home.dart';
+import 'package:hikemaniak_app/screens/shop/shop_web_view.dart';
 import 'package:hikemaniak_app/screens/tests/map_test.dart';
 import 'package:hikemaniak_app/screens/test.dart';
 import 'package:http/http.dart' as http;
@@ -54,7 +55,7 @@ class _AccountState extends State<Account> {
       }
     }else{
       Navigator.push(context, MaterialPageRoute(builder:
-      (context)=> SignInScreen()
+      (context)=> const SignInScreen()
       ));
     }
   }
@@ -157,7 +158,7 @@ class _AccountState extends State<Account> {
                                     children: [
                                       Text(this.username ?? ''),
                                       Text(email ?? 'ops',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.grey
                                       ),
                                       ),
@@ -216,7 +217,7 @@ class _AccountState extends State<Account> {
                       ),
                       ////
                       const SizedBox(height: 20,),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
@@ -237,7 +238,7 @@ class _AccountState extends State<Account> {
                       ),
                       ////
                       const SizedBox(height: 20,),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
@@ -258,7 +259,7 @@ class _AccountState extends State<Account> {
                       ),
                       ////
                       const SizedBox(height: 20,),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
@@ -277,11 +278,42 @@ class _AccountState extends State<Account> {
                         width: double.infinity,
                         color: Colors.grey,
                       ),
+                     InkWell(
+                       onTap: (){
+                         Navigator.push(context, MaterialPageRoute(builder:
+                         (context)=> ShopWebView()
+                         ));
+                       },
+                       child: const Column(
+                         children: [
+                           SizedBox(height: 20,),
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                               Row(
+                                 children: [
+                                   Icon(Icons.store),
+                                   SizedBox(width: 10,),
+                                   Text('Shop ')
+                                 ],
+                               ),
+                               Icon(Icons.keyboard_arrow_right)
+                             ],
+                           ),
+                           SizedBox(height: 20,),
+                         ],
+                       ),
+                     ),
+                      Container(
+                        height: 1,
+                        width: double.infinity,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(height: 20,),
                       InkWell(
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder:
-                              (context)=> HomeAdmin()
+                              (context)=> const HomeAdmin()
                           ));
                         },
                         child: const Row(
@@ -309,7 +341,7 @@ class _AccountState extends State<Account> {
                       GestureDetector(
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder:
-                          (context)=> HomeGuide()
+                          (context)=> const HomeGuide()
                           ));
                         },
                         child: const Row(
@@ -334,7 +366,7 @@ class _AccountState extends State<Account> {
                       ),
                       /////
                       const SizedBox(height: 20,),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
