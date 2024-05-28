@@ -65,14 +65,13 @@ class _HomeAdminState extends State<HomeAdmin> {
 
         setState(() {
           hikeData = List<Map<String, dynamic>>.from(json.decode(response.body)['data']);
-
         });
       } else {
         throw Exception('Failed to load events');
       }
     } catch(e){
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Something Went Wrong$e'))
+        SnackBar(content: Text('No Bookings'))
       );
     }
   }

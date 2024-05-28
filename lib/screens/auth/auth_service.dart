@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:hikemaniak_app/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 class AuthService {
   final _auth  = FirebaseAuth.instance;
   Future<UserCredential?> loginWithGoogle() async {
@@ -31,5 +34,24 @@ class AuthService {
     }
   }
 
+  Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    final response = await http.post(
+      Uri.parse('$BASE_URL/logout'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Clear SharedPreferences
+      await prefs.remove('token');
+      // Navigate to login screen or wherever appropriate
+    } else {
+      print('$token');
+    }
+  }
 
 }

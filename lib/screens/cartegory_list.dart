@@ -257,7 +257,6 @@ class _CategoryListsState extends State<CategoryLists> {
                                           children: [
                                             WidgetSpan(
                                                 child: Container(
-
                                                   child: Icon(Icons.category_outlined,
                                                     color: lightColorScheme.primary,
                                                     size: 20,

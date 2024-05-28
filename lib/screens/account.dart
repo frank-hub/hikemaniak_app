@@ -32,6 +32,7 @@ class _AccountState extends State<Account> {
   String? username;
   String email = '';
   final user = FirebaseAuth.instance.currentUser;
+  final AuthService authService = AuthService();
 
   @override
   void initState() {
@@ -436,8 +437,12 @@ class _AccountState extends State<Account> {
                         color: Colors.grey,
                       ),
                       TextButton(
-                          onPressed: (){
-                            logout();
+                          onPressed: () async {
+                            // logout();
+                            await authService.logout();
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context)=> SignInScreen()
+                            ));
                           },
                           child: Text(
                         'Logout',

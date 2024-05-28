@@ -27,8 +27,8 @@ class _DiscoverSelectorState extends State<DiscoverSelector> {
     if (user != null) {
       currentUserEmail = user.email;
     } else {
-      // Handle the case where the user is not signed in
-      return Text('Please sign in to access this screen.');
+      // Handle the case where the user is not signed with gmail
+      currentUserEmail = widget.userName.toUpperCase();
     }
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
