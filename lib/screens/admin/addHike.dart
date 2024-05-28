@@ -2,11 +2,14 @@
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 // import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:hikemaniak_app/constants.dart';
+import 'package:hikemaniak_app/controller/hike_service.dart';
+import 'package:hikemaniak_app/screens/admin/updateHike.dart';
 import 'package:hikemaniak_app/theme.dart';
 import 'package:http/http.dart' as http;
 // import 'package:flutter_google_places/flutter_google_places.dart';
@@ -14,6 +17,8 @@ import 'package:http/http.dart' as http;
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../../model/hike.dart';
 //
 
 class AddHike extends StatefulWidget {
@@ -26,11 +31,30 @@ class AddHike extends StatefulWidget {
 class _AddHikeState extends State<AddHike> {
   bool _locationPermissionGranted = false;
   bool _isLoading = false;
+  hikeService hikesService =  hikeService();
+  List<Hike> hike = [];
 
   @override
   void initState() {
     super.initState();
     _requestLocationPermission();
+    fetchHikes();
+  }
+
+  Future<void> fetchHikes() async{
+    final response = await http.get(Uri.parse('$BASE_URL/hike/index'));
+
+    try{
+      if(response.statusCode == 200){
+        Map<String,dynamic> resData = json.decode(response.body);
+        List<dynamic> hikes = resData['data'];
+        setState(() {
+          hike = hikes.map((data) => Hike.fromJson(data)).toList();
+        });
+      }
+    }catch(e){
+      print(e);
+    }
   }
 
   File? _imageFile;
@@ -990,7 +1014,7 @@ class _AddHikeState extends State<AddHike> {
             Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: ListView.builder(
-                  itemCount: 10,
+                  itemCount: hike.length,
                   itemBuilder: (context, index) {
                     return Container(
                       height: 150,
@@ -1000,7 +1024,7 @@ class _AddHikeState extends State<AddHike> {
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             children: [
-                              const Image(image: AssetImage('assets/images/details.jpg')),
+                              Image(image: NetworkImage(hike[index].image ?? '')),
                               Expanded(
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -1008,22 +1032,14 @@ class _AddHikeState extends State<AddHike> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text("Ref# 2001",
+                                      Text("Ref#${hike[index].id}",
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             fontSize: 12,
                                             letterSpacing: 0.2
                                         ),
                                       ),
-                                      const Text("Mt Kenya Day Dash – Sirimon",
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            letterSpacing: 0.2
-                                        ),
-                                      ),
-                                      const SizedBox(height: 1,),
-                                      const Text("Cyrus Doe",
+                                      Text(hike[index].title ?? '',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             fontSize: 12,
@@ -1031,7 +1047,15 @@ class _AddHikeState extends State<AddHike> {
                                         ),
                                       ),
                                       const SizedBox(height: 1,),
-                                      const Text("17-Mar-2024 19:00",
+                                      Text(hike[index].category ?? '',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            letterSpacing: 0.2
+                                        ),
+                                      ),
+                                      const SizedBox(height: 1,),
+                                      Text(hike[index].date_time ?? '',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             fontSize: 12,
@@ -1040,7 +1064,11 @@ class _AddHikeState extends State<AddHike> {
                                       ),
                                       SizedBox(height: 13,),
                                       GestureDetector(
-                                        onTap: _createEvent, // Call _createEvent method on tap
+                                        onTap: (){
+                                          Navigator.push(context, MaterialPageRoute(builder:
+                                          (context)=>UpdateHike(hikeId: hike[index].id.toString(),)
+                                          ));
+                                        }, // Call _createEvent method on tap
                                         child: Container(
                                           height: 30,
                                           width: 30,

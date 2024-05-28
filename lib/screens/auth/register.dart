@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hikemaniak_app/constants.dart';
+import 'package:hikemaniak_app/screens/auth/auth_service.dart';
 import 'package:hikemaniak_app/theme.dart';
 import 'package:hikemaniak_app/widgets/custom_scaffold.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -20,6 +22,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formSignupKey = GlobalKey<FormState>();
+  final _auth = AuthService();
   bool agreePersonalData = true;
   bool rememberPassword = true;
 
@@ -326,34 +329,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       SizedBox(height: 10,),
                       InkWell(
-                        onTap: () {
-                          if (true) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Processing Data'),
-                              ),
-                            );
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                                HomeScreen()
-                            ));
-                          } else if (!rememberPassword) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'Please agree to the processing of personal data')),
-                            );
-                          }
+                        onTap: () async{
+                          await _auth.loginWithGoogle();
+                          FirebaseAuth.instance.authStateChanges().listen((user) {
+                            if (user != null) {
+                              // User is signed in, navigate to HomeScreen
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => HomeScreen()),
+                              );
+                            }else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text('Oops Something Went Wrong'))
+                              );
+                            }
+                          });
                         },
                         child: Container(
                           height: 43,
                           width: double.infinity,
+                          margin: EdgeInsets.all(2),
                           padding: EdgeInsets.symmetric(vertical: 8,horizontal: 10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: Colors.black12,
+                            color: Colors.white,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.white70,
+                                color: Colors.black,
                                 offset: Offset(2.0, 2.0),
                                 blurRadius: 4.0,
                               ),

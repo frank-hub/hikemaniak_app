@@ -183,7 +183,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
                                   image: DecorationImage(
-                                    image: AssetImage('assets/images/test3.jpeg'), // Replace 'image.jpg' with your image path
+                                    image: AssetImage('assets/images/cat5.jpeg'), // Replace 'image.jpg' with your image path
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -262,7 +262,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
                                   image: DecorationImage(
-                                    image: AssetImage('assets/images/test3.jpeg'), // Replace 'image.jpg' with your image path
+                                    image: AssetImage('assets/images/cat3.jpeg'), // Replace 'image.jpg' with your image path
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -341,7 +341,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
                                   image: DecorationImage(
-                                    image: AssetImage('assets/images/test3.jpeg'), // Replace 'image.jpg' with your image path
+                                    image: AssetImage('assets/images/cat4.jpg'), // Replace 'image.jpg' with your image path
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -420,7 +420,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
                                   image: DecorationImage(
-                                    image: AssetImage('assets/images/test3.jpeg'), // Replace 'image.jpg' with your image path
+                                    image: AssetImage('assets/images/cat2.jpeg'), // Replace 'image.jpg' with your image path
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -478,7 +478,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   ],
                                 ),
                               ),
-
                             ],
                           ),
                         ),
@@ -499,7 +498,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15.0),
                                   image: DecorationImage(
-                                    image: AssetImage('assets/images/test3.jpeg'), // Replace 'image.jpg' with your image path
+                                    image: AssetImage('assets/images/cat1.jpg'), // Replace 'image.jpg' with your image path
                                     fit: BoxFit.cover,
                                   ),
                                 ),

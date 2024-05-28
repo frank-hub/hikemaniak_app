@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hikemaniak_app/constants.dart';
+import 'package:hikemaniak_app/screens/auth/auth_service.dart';
 import 'package:hikemaniak_app/screens/auth/register.dart';
 import 'package:hikemaniak_app/screens/home.dart';
 import 'package:hikemaniak_app/screens/map_trail.dart';
@@ -18,6 +20,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  final _auth = AuthService();
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
 
@@ -66,7 +69,7 @@ class _SignInScreenState extends State<SignInScreen> {
     } catch (error) {
       print('Error: $error');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('No user found, Please sign up.'),
         ),
       );
@@ -238,60 +241,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           child: const Text('Sign In'),
                         ),
                       ),
-                      SizedBox(height: 10,),
-                      InkWell(
-                        onTap: () {
-                          if (true) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Processing Data'),
-                              ),
-                            );
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                                HomeScreen()
-                            ));
-                          } else if (!rememberPassword) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'Please agree to the processing of personal data')),
-                            );
-                          }
-                        },
-                        child: Container(
-                          height: 43,
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 8,horizontal: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.black12,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white70,
-                                offset: Offset(2.0, 2.0),
-                                blurRadius: 4.0,
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image(image: AssetImage('assets/images/google.png'
-                              ),
-                              height: 30,
-                              ),
-                              SizedBox(width: 20,),
-                              Text("Sign In With Google",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black45,
-
-                              ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
                       const SizedBox(
                         height: 25.0,
                       ),
@@ -328,19 +277,63 @@ class _SignInScreenState extends State<SignInScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          // Logo(Logos.facebook_f),
-                          // Logo(Logos.twitter),
-                          // Logo(Logos.google),
-                          // Logo(Logos.apple),
-                        ],
+                      InkWell(
+                        onTap: () async{
+                          await _auth.loginWithGoogle();
+                          FirebaseAuth.instance.authStateChanges().listen((user) {
+                            if (user != null) {
+                              // User is signed in, navigate to HomeScreen
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => HomeScreen()),
+                              );
+                            }else{
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text('Oops Something Went Wrong'))
+                              );
+                            }
+                          });
+                        },
+                        child: Container(
+                          height: 43,
+                          width: double.infinity,
+                          margin: EdgeInsets.all(2),
+                          padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                            boxShadow: [
+                              const BoxShadow(
+                                color: Colors.black,
+                                offset: Offset(2.0, 2.0),
+                                blurRadius: 4.0,
+                              ),
+                            ],
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image(image: AssetImage('assets/images/google.png'
+                              ),
+                                height: 30,
+                              ),
+                              SizedBox(width: 20,),
+                              Text("Sign In With Google",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black45,
+
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // don't have an account
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

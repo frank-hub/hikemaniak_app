@@ -1,17 +1,23 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hikemaniak_app/constants.dart';
 import 'package:hikemaniak_app/screens/admin/home.dart';
+import 'package:hikemaniak_app/screens/auth/auth_service.dart';
 import 'package:hikemaniak_app/screens/auth/login.dart';
 import 'package:hikemaniak_app/screens/guide/home.dart';
+import 'package:hikemaniak_app/screens/past_hikes.dart';
+import 'package:hikemaniak_app/screens/shop/privacy.dart';
 import 'package:hikemaniak_app/screens/shop/shop_web_view.dart';
 import 'package:hikemaniak_app/screens/tests/map_test.dart';
 import 'package:hikemaniak_app/screens/test.dart';
 import 'package:http/http.dart' as http;
 import 'package:hikemaniak_app/widgets/bottom_nav_selector.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../theme.dart';
 
@@ -25,6 +31,7 @@ class Account extends StatefulWidget {
 class _AccountState extends State<Account> {
   String? username;
   String email = '';
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -32,36 +39,48 @@ class _AccountState extends State<Account> {
     fetchUser();
   }
 
+  Future<void> logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
+      Navigator.pushReplacementNamed(context, '/logout'); // Navigate to LoginScreen
+      print('Successfully signed out!');
+    } catch (e) {
+      print('Error signing out: $e');
+    }
+  }
+
   Future<void> fetchUser() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? token  = preferences.getString('token');
-    if(token!.isNotEmpty) {
-      final url = Uri.parse('$BASE_URL/user');
-      final response = await http.get(url,
-          headers: {'Authorization': 'Bearer $token'}
-      );
-
-      if (response.statusCode == 200) {
-        var userData = json.decode(response.body);
-        setState(() {
-          username = userData['name'];
-          email = userData['email'];
-        });
-      }else{
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.body.toString()))
+    try{
+      if(token!.isNotEmpty) {
+        final url = Uri.parse('$BASE_URL/user');
+        final response = await http.get(url,
+            headers: {'Authorization': 'Bearer $token'}
         );
+
+        if (response.statusCode == 200) {
+          var userData = json.decode(response.body);
+          setState(() {
+            username = userData['name'];
+            email = userData['email'];
+          });
+        }else{
+
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(response.body.toString()))
+          );
+        }
       }
-    }else{
-      Navigator.push(context, MaterialPageRoute(builder:
-      (context)=> const SignInScreen()
-      ));
+    }catch(e){
+      print(e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    username ??= user?.email;
     return Scaffold(
       bottomNavigationBar: const BottomNav(),
 
@@ -237,42 +256,64 @@ class _AccountState extends State<Account> {
                         color: Colors.grey,
                       ),
                       ////
-                      const SizedBox(height: 20,),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.cases_rounded),
-                              SizedBox(width: 10,),
-                              Text('Privacy and sharing')
-                            ],
-                          ),
-                          Icon(Icons.keyboard_arrow_right)
-                        ],
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => Privacy(),
+                          ));
+                        },
+                        child: const Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.cases_rounded),
+                                    SizedBox(width: 10,),
+                                    Text('Privacy and sharing')
+                                  ],
+                                ),
+                                Icon(Icons.keyboard_arrow_right)
+                              ],
+                            ),
+                            SizedBox(height: 20,),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 20,),
                       Container(
                         height: 1,
                         width: double.infinity,
                         color: Colors.grey,
                       ),
                       ////
-                      const SizedBox(height: 20,),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.archive),
-                              SizedBox(width: 10,),
-                              Text('Past Hikes')
-                            ],
-                          ),
-                          Icon(Icons.keyboard_arrow_right)
-                        ],
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder:
+                          (context)=>PastHikes()
+                          ));
+                        },
+                        child: const Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.archive),
+                                    SizedBox(width: 10,),
+                                    Text('Past Hikes')
+                                  ],
+                                ),
+                                Icon(Icons.keyboard_arrow_right)
+                              ],
+                            ),
+                            SizedBox(height: 20,),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 20,),
                       Container(
                         height: 1,
                         width: double.infinity,
@@ -281,7 +322,7 @@ class _AccountState extends State<Account> {
                      InkWell(
                        onTap: (){
                          Navigator.push(context, MaterialPageRoute(builder:
-                         (context)=> ShopWebView()
+                         (context)=> const ShopWebView()
                          ));
                        },
                        child: const Column(
@@ -365,27 +406,40 @@ class _AccountState extends State<Account> {
                         color: Colors.grey,
                       ),
                       /////
-                      const SizedBox(height: 20,),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.headset_mic_outlined),
-                              SizedBox(width: 10,),
-                              Text('Call Us')
-                            ],
-                          ),
-                          Icon(Icons.keyboard_arrow_right)
-                        ],
+                      InkWell(
+                        onTap: (){
+                          _makePhoneCall();
+                        },
+                        child: const Column(
+                          children: [
+                            SizedBox(height: 20,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.headset_mic_outlined),
+                                    SizedBox(width: 10,),
+                                    Text('Call Us')
+                                  ],
+                                ),
+                                Icon(Icons.keyboard_arrow_right)
+                              ],
+                            ),
+                            SizedBox(height: 20,),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 20,),
                       Container(
                         height: 1,
                         width: double.infinity,
                         color: Colors.grey,
                       ),
-                      TextButton(onPressed: (){}, child: Text(
+                      TextButton(
+                          onPressed: (){
+                            logout();
+                          },
+                          child: Text(
                         'Logout',
                         style: TextStyle(color: lightColorScheme.primary),
                       ))
@@ -399,4 +453,16 @@ class _AccountState extends State<Account> {
       ),
     );
   }
+  void _makePhoneCall() async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: '+254717353774',
+    );
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    } else {
+      print('Could not launch $launchUri');
+    }
+  }
+
 }

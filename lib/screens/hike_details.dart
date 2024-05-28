@@ -94,7 +94,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                                     : 5.0),
                                 child: Icon(Icons.category_outlined,
                                   color: lightColorScheme.primary,
-                                  size: 25,
+                                  size: 20,
                                 ),
                               )
                           ),
@@ -125,7 +125,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                                 padding: const EdgeInsets.only(right: 5.0),
                                 child: Icon(Icons.group,
                                   color: lightColorScheme.primary,
-                                  size: 25,
+                                  size: 20,
                                 ),
                               )
                           ),
@@ -161,7 +161,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                                 padding: const EdgeInsets.only(right: 5.0),
                                 child: Icon(Icons.pin_drop,
                                   color: lightColorScheme.primary,
-                                  size: 25,
+                                  size: 20,
                                 ),
                               )
                           ),
@@ -190,7 +190,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                           WidgetSpan(
                               child: Icon(Icons.calendar_month,
                                 color: lightColorScheme.primary,
-                                size: 25,
+                                size: 20,
                               )
                           ),
                           const TextSpan(
@@ -225,7 +225,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                                 padding: const EdgeInsets.only(right: 5.0),
                                 child: Icon(Icons.today_sharp,
                                   color: lightColorScheme.primary,
-                                  size: 25,
+                                  size: 20,
                                 ),
                               )
                           ),
@@ -254,7 +254,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                           WidgetSpan(
                               child: Icon(Icons.run_circle_outlined,
                                 color: lightColorScheme.primary,
-                                size: 25,
+                                size: 20,
                               )
                           ),
                           const TextSpan(
@@ -333,7 +333,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Icon(Icons.pin_drop_outlined,
-                            size: 25,
+                            size: 20,
                               color: Colors.white,
                             ),
                             Text("View Trail",
@@ -368,7 +368,7 @@ class _HikeDetailsState extends State<HikeDetails> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Icon(Icons.edit_calendar_outlined,
-                            size: 25,
+                            size: 20,
                               color: Colors.white,
                             ),
                             Text("Book Now",

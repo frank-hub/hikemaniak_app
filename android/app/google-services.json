@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "44617477269",
+    "project_id": "tenacious-lore-420517",
+    "storage_bucket": "tenacious-lore-420517.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44617477269:android:a047cb80e6034a06cebf9c",
+        "android_client_info": {
+          "package_name": "com.hikemaniak.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE_kYRuq-VL_Bv-o1cnC1ciyxhnKdZ9EM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

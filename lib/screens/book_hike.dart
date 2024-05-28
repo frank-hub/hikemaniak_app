@@ -115,7 +115,7 @@ class _BookHikeState extends State<BookHike> {
         userId = userData['id'].toString();
       });
     } else {
-      userId = 'Please Login';
+      userId = '1';
     }
   }
   @override

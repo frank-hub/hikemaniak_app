@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hikemaniak_app/screens/auth/auth_service.dart';
 import 'package:hikemaniak_app/theme.dart';
 
 class DiscoverSelector extends StatefulWidget {
@@ -12,9 +14,22 @@ class DiscoverSelector extends StatefulWidget {
 }
 
 class _DiscoverSelectorState extends State<DiscoverSelector> {
+  final userDetails = AuthService();
+  String? currentUserEmail;
+
+  String getEffectiveUsername() {
+    return currentUserEmail?.isNotEmpty ?? false ? currentUserEmail! : widget.userName.toUpperCase();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      currentUserEmail = user.email;
+    } else {
+      // Handle the case where the user is not signed in
+      return Text('Please sign in to access this screen.');
+    }
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Container(
@@ -35,7 +50,9 @@ class _DiscoverSelectorState extends State<DiscoverSelector> {
                     fontFamily: 'Montserrat',
                   ),
                 ),
-                Text(widget.userName.toUpperCase(),
+                Text(
+                    // widget.userName.toUpperCase(),
+                    getEffectiveUsername(),
                     style: TextStyle(
                         fontSize: 14, color: Colors.black.withOpacity(0.35))),
                 Text('Trending Activities everywhere',

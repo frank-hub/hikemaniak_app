@@ -144,7 +144,7 @@ class _CategoryListsState extends State<CategoryLists> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Image.asset(
-                          'assets/images/map.jpg',
+                          'assets/images/maps.png',
                           fit: BoxFit.fill,
                         ),
                       ),
@@ -207,7 +207,7 @@ class _CategoryListsState extends State<CategoryLists> {
                                         style: TextStyle(
                                             color: lightColorScheme.primary,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20
+                                            fontSize: 16
                                         ),
                                       ),
 
@@ -218,7 +218,7 @@ class _CategoryListsState extends State<CategoryLists> {
                                             children: [
                                               Icon(Icons.pin_drop,
                                                 color: lightColorScheme.primary,
-                                                size: 30,
+                                                size: 20,
                                               ),
                                               Expanded(
                                                 child: Padding(
@@ -260,7 +260,7 @@ class _CategoryListsState extends State<CategoryLists> {
 
                                                   child: Icon(Icons.category_outlined,
                                                     color: lightColorScheme.primary,
-                                                    size: 30,
+                                                    size: 20,
                                                   ),
                                                   padding: EdgeInsets.only(right: 5),
                                                 )

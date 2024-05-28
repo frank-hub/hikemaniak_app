@@ -140,7 +140,7 @@ List<Hike> hike =[];
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Image.asset(
-                          'assets/images/map.jpg',
+                          'assets/images/maps.png',
                           fit: BoxFit.fill,
                         ),
                       ),
@@ -176,7 +176,7 @@ List<Hike> hike =[];
                         },
                         child: Card(
                           child: Container(
-                            height: 329,
+                            height: 315,
                             width: 250,
                             padding: const EdgeInsets.all(10),
                             child:Column(
@@ -203,7 +203,7 @@ List<Hike> hike =[];
                                         style: TextStyle(
                                           color: lightColorScheme.primary,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 18
+                                          fontSize: 16
                                         ),
                                       ),
 
@@ -214,7 +214,7 @@ List<Hike> hike =[];
                                             children: [
                                               Icon(Icons.pin_drop,
                                                 color: lightColorScheme.primary,
-                                                size: 30,
+                                                size: 20,
                                               ),
                                               Expanded(
                                                 child: Padding(
@@ -254,7 +254,7 @@ List<Hike> hike =[];
 
                                                   child: Icon(Icons.category_outlined,
                                                   color: lightColorScheme.primary,
-                                                    size: 30,
+                                                    size: 20,
                                                   ),
                                                   padding: EdgeInsets.only(right: 5),
                                                 )
