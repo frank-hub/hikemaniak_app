@@ -182,7 +182,7 @@ List<Hike> hike =[];
                             child:Column(
                               children: [
                                 Container(
-                                  height: 200,
+                                  height: 194,
                                   decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: NetworkImage(
@@ -203,7 +203,7 @@ List<Hike> hike =[];
                                         style: TextStyle(
                                           color: lightColorScheme.primary,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 16
+                                          fontSize: 13
                                         ),
                                       ),
 
@@ -238,7 +238,7 @@ List<Hike> hike =[];
                                                 hike[index].ctnAmount ?? 'amount',
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
+                                                    fontSize: 14,
                                                     color: lightColorScheme.primary
                                                 ),
                                               ),

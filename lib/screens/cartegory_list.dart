@@ -186,12 +186,12 @@ class _CategoryListsState extends State<CategoryLists> {
                             child:Column(
                               children: [
                                 Container(
-                                  height: 200,
+                                  height: 195,
                                   decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: NetworkImage(
                                             hike[index].image ?? 'assets/images/test.jpg'),
-                                        fit: BoxFit.fill,
+                                        fit: BoxFit.cover,
                                       ),
                                       borderRadius: BorderRadius.circular(10)
                                   ),
@@ -207,7 +207,7 @@ class _CategoryListsState extends State<CategoryLists> {
                                         style: TextStyle(
                                             color: lightColorScheme.primary,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16
+                                            fontSize: 13
                                         ),
                                       ),
 
@@ -236,15 +236,13 @@ class _CategoryListsState extends State<CategoryLists> {
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
-                                              Icon(Icons.attach_money,
-                                                color: lightColorScheme.primary,
-                                                size: 20,
-                                              ),
+                                              Text("From"),
+                                              SizedBox(width: 5,),
                                               Text(
-                                                hike[index].trstAmount ?? 'amount',
+                                                hike[index].ctnAmount ?? 'amount',
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize: 20,
+                                                    fontSize: 14,
                                                     color: lightColorScheme.primary
                                                 ),
                                               ),
