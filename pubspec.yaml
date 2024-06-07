@@ -54,6 +54,7 @@ dependencies:
   google_sign_in: ^6.2.1
   firebase_auth: ^4.19.6
   url_launcher: ^6.2.6
+  awesome_notifications: ^0.9.3+1
 #  flutter_google_places: ^0.3.0
 #  geolocator: ^11.0.0
 #  provider: ^6.1.2

@@ -6,7 +6,6 @@ import 'package:hikemaniak_app/constants.dart';
 import 'package:hikemaniak_app/screens/auth/auth_service.dart';
 import 'package:hikemaniak_app/screens/auth/register.dart';
 import 'package:hikemaniak_app/screens/home.dart';
-import 'package:hikemaniak_app/screens/map_trail.dart';
 import 'package:hikemaniak_app/theme.dart';
 import 'package:hikemaniak_app/widgets/custom_scaffold.dart';
 import 'package:http/http.dart' as http;

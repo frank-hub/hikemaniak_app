@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:hikemaniak_app/constants.dart';
@@ -321,10 +322,17 @@ class _AddHikeState extends State<AddHike> {
         );
 
         // Handle the response data (if applicable)
-        // Uncomment if you want to parse the response JSON
         // final data = jsonDecode(response.body);
         // final createdHike = Hike.fromJson(data);
-        // // Handle the created hike object
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+              id: 13,
+              channelKey: 'basic_channel',
+              title: title,
+              body: category
+          )
+        );
+        // Handle the created hike object
 
         // Clear text fields
         start_pointController.clear();

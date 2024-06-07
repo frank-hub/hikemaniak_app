@@ -121,7 +121,7 @@ class _HomeAdminState extends State<HomeAdmin> {
                   child: Text('Bookings'),
                 ),
                 Tab(
-                  child: Text('Status'),
+                  child: Text('Confirmed'),
                 ),
                 Tab(
                   child: Text('Profile'),
