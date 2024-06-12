@@ -10,10 +10,10 @@ import 'package:hikemaniak_app/screens/auth/auth_service.dart';
 import 'package:hikemaniak_app/screens/auth/login.dart';
 import 'package:hikemaniak_app/screens/guide/home.dart';
 import 'package:hikemaniak_app/screens/past_hikes.dart';
+import 'package:hikemaniak_app/screens/personalInfo.dart';
 import 'package:hikemaniak_app/screens/shop/privacy.dart';
 import 'package:hikemaniak_app/screens/shop/shop_web_view.dart';
 import 'package:hikemaniak_app/screens/tests/map_test.dart';
-import 'package:hikemaniak_app/screens/test.dart';
 import 'package:http/http.dart' as http;
 import 'package:hikemaniak_app/widgets/bottom_nav_selector.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -212,7 +212,7 @@ class _AccountState extends State<Account> {
                       InkWell(
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder:
-                          (context)=>PlaceAutocomplete()
+                          (context)=>PersonalInfo()
                           ));
                         },
                         child: const Row(

@@ -23,13 +23,7 @@ class _DiscoverSelectorState extends State<DiscoverSelector> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      currentUserEmail = user.email;
-    } else {
-      // Handle the case where the user is not signed with gmail
-      currentUserEmail = widget.userName.toUpperCase();
-    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Container(
