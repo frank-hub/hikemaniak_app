@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hikemaniak_app/model/hikeBooking.dart';
 import 'package:hikemaniak_app/screens/admin/addHike.dart';
+import 'package:hikemaniak_app/screens/admin/bioform.dart';
 import 'package:hikemaniak_app/screens/notifications.dart';
+import 'package:hikemaniak_app/screens/personalInfo.dart';
 import 'package:hikemaniak_app/theme.dart';
 import 'package:http/http.dart' as http;
 import 'package:icons_plus/icons_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
 class HomeAdmin extends StatefulWidget {
@@ -22,12 +25,64 @@ class _HomeAdminState extends State<HomeAdmin> {
 
   List<Map<String, dynamic>> hikeData = [];
   List<Map<String, dynamic>> confirmedHike = [];
+  String? username = '';
+  String email = 'example@example.com';
+  String user_id = '';
+  String bio = '';
 
   @override
   void initState() {
     super.initState();
     fetchHike();
     fetchBooked();
+    fetchUser();
+
+  }
+
+  Future<void> fetchUser() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? token = preferences.getString('token');
+    try {
+      if (token!.isNotEmpty) {
+        final url = Uri.parse('$BASE_URL/user');
+        final response = await http.get(
+          url,
+          headers: {'Authorization': 'Bearer $token'},
+        );
+
+        if (response.statusCode == 200) {
+          var userData = json.decode(response.body);
+          setState(() {
+            username = userData['name'];
+            user_id = userData['id'].toString();
+          });
+          
+          final url2  = await http.get(Uri.parse('$BASE_URL/bio/$user_id'));
+
+          if(url2.statusCode == 200){
+            var bioData = json.decode(url2.body);
+
+            setState(() {
+              bio = bioData['body']['bio'].toString();
+            });
+          }else{
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('No Bio - Please update'))
+            );
+          }
+          
+          
+          
+          
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.body.toString())),
+          );
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<void> fetchBooked() async {
@@ -350,12 +405,19 @@ class _HomeAdminState extends State<HomeAdmin> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Cyrus Doe",
+                          Text(username ?? '',
                             style: TextStyle(fontSize: 20,fontWeight: FontWeight.w300),
                           ),
-                          Icon(Clarity.note_edit_line,
-                            size: 25,
-                            color: lightColorScheme.primary,
+                          IconButton(
+                              onPressed: (){
+                                Navigator.push(context, MaterialPageRoute(builder:
+                                (context)=> PersonalInfo()
+                                ));
+                              },
+                              icon: Icon(Clarity.note_edit_line,
+                                size: 25,
+                                color: lightColorScheme.primary,
+                              )
                           )
                         ],
                       ),
@@ -366,13 +428,20 @@ class _HomeAdminState extends State<HomeAdmin> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Expanded(
-                            child: Text("Some Info about the admin or service provider Hello.Some Info about the admin provider.s",
+                          Expanded(
+                            child: Text(bio ?? '',
                               style: TextStyle(fontWeight: FontWeight.w500),),
                           ),
-                          Icon(Clarity.note_edit_line,
-                            size: 25,
-                            color: lightColorScheme.primary,
+                          IconButton(
+                              onPressed: (){
+                                Navigator.push(context, MaterialPageRoute(builder:
+                                    (context)=> BioForm()
+                                ));
+                              },
+                              icon: Icon(Clarity.note_edit_line,
+                                size: 25,
+                                color: lightColorScheme.primary,
+                              )
                           )
                         ],
                       ),
